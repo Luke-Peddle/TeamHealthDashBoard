@@ -36,38 +36,47 @@ console.log(userName)
         });
     }
   return (
-    <div>
+    <div
+    className=' grid place-items-center'>
         <h3>Create a New User</h3>
+        <div >
         <form onSubmit={handleSubmit}>
             <div>
+                
                 <label>Username</label>
+                <br/>
                 <input
                     type="text"
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
                     required
+                    className= "border "
                 />
             </div>
             <br/>
 
             <div>
                 <label>Password</label>
+                <br/>
                 <input
-                    type="text"
+                    type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    className= "border "
                 />
             </div>
             <br/>
 
             <div>
                 <label>First Name</label>
+                <br/>
                 <input
                     type="text"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     required
+                    className= "border "
                 />
 
             </div>
@@ -75,28 +84,33 @@ console.log(userName)
 
             <div>
                 <label>Last Name</label>
+                <br/>
                 <input
                     type="text"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     required
+                    className= "border "
                 />
             </div>
             <br/>
 
             <div>
                 <label>Email</label>
+                <br/>
                 <input
                     type="text"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    className= "border "
                 />
             </div>
             <br/>
 
             <div>
                 <label>Role</label>
+                <br/>
                 <input
                     type="radio"
                     id = "Manager"
@@ -127,11 +141,13 @@ console.log(userName)
                     required
                 />
                 <label htmlFor  = "contributor">contributor</label><br></br>
+                <br/>
                 
             </div>
 
-            <button type="submit">Add User</button>
+            <button type="submit" className='border'>Add User</button>
         </form>
+        </div>
         </div>
   )
 }
