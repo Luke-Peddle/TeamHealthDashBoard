@@ -22,7 +22,7 @@ const userModel ={
     async getAllUser(){
         try{
             const results = await db.query(
-                'SELECT * FROM users',
+                'SELECT * FROM users ',
                 
             )
 
@@ -34,7 +34,27 @@ const userModel ={
             console.log(error)
             throw error;
           }
+    },
+    async getUser(id){
+        try{
+            const results = await db.query(
+               'SELECT * FROM users WHERE user_id = $1',
+                [id]
+                
+            )
+    
+            console.log(results)
+            return results.rows;
+    
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+          }
     }
 }
+
+
+
 
 module.exports = userModel;
