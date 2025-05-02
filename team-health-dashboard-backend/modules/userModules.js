@@ -22,12 +22,12 @@ const userModel ={
     async getAllUser(){
         try{
             const results = await db.query(
-                'Select * from users',
+                'SELECT * FROM users',
                 
             )
 
             console.log(results)
-            return results.rows[0];
+            return results.rows;
 
         }
         catch (error) {
