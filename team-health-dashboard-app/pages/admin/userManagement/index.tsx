@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from "axios";
 import AddingUser from './addingUser/addingUser';
-import Users from './Users/users';
+import UsersList from './UsersList/UsersList';
 import {User} from '@/types/user';
 
 export async function getServerSideProps() {
@@ -23,7 +23,7 @@ interface UsersProps {
 const Page: React.FC<UsersProps> = ({ users }) => {
   return (
     <div>
-        <Users users={users}/>
+        <UsersList users={users}/>
 
          <AddingUser/> 
     </div>
