@@ -23,6 +23,15 @@ async getUsers(req, res) {
      const user = await userModel.getUser(id);
      res.status(201).json(user);
 },
+
+async updateUser(req, res) {
+
+    console.log(req.params)
+    const { id, username, firstName,lastName,email, role } = req.body;
+    console.log("id: " + id)
+     const user = await userModel.updateUser(id, username, firstName,lastName,email, role);
+     res.status(201).json(user);
+},
 }
 
 module.exports = userController;
