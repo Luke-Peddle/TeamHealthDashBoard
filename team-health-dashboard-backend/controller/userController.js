@@ -21,16 +21,27 @@ async getUsers(req, res) {
     const id = req.params.id;
     console.log("id: " + id)
      const user = await userModel.getUser(id);
+     
      res.status(201).json(user);
 },
 
 async updateUser(req, res) {
 
     console.log(req.params)
-    const { id, username, firstName,lastName,email, role } = req.body;
+    const { id, username,password, firstName,lastName,email, role } = req.body;
+    console.log(id, username,password, firstName,lastName,email, role)
     console.log("id: " + id)
      const user = await userModel.updateUser(id, username, firstName,lastName,email, role);
      res.status(201).json(user);
+},
+async DeleteUsers(req, res) {
+
+    console.log(req.params)
+    const id = req.params.id;
+    console.log("id: " + id)
+     const response = await userModel.deleteUser(id);
+     
+     res.status(201).json(response);
 },
 }
 
