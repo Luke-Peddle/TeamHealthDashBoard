@@ -53,12 +53,13 @@ async updateUser(req, res) {
      
 },
 async DeleteUsers(req, res) {
-    await redisClient.connect();
+
     console.log(req.params)
     const id = req.params.id;
     console.log("id: " + id)
     const response = await userModel.deleteUser(id);
-    await redisClient.del(`user:${user_id}`)
+    await redisClient.del(`user:${id}`)
+
      res.status(201).json(response);
 },
 }
