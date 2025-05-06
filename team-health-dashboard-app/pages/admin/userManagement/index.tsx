@@ -6,6 +6,7 @@ import UsersList from './UsersList/UsersList';
 import {User} from '@/types/user';
 import redis from '@/lib/redis'
 
+
 export async function getServerSideProps(context) {
 
   const clearChache = context.query.clearCache === 'true';
