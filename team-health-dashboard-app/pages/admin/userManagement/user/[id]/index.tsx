@@ -4,30 +4,19 @@ import redis from '@/lib/redis'
 import {useState} from 'react';
 import { useRouter } from 'next/router';
 import {User} from '@/types/user';
+import { GetServerSideProps } from 'next/types';
+
 
 interface UserProps {
   user: User 
 }
 
-export async function getServerSideProps(context) {
+export const getServerSideProps = async (context) => {
   try {
     const { id } = context.params;
-    const cacheKey = `user:${id}`;
-    const cacheData = await redis.get(cacheKey);
-
-    if(cacheData){
-      console.log("Cache Passed")
-      const user = JSON.parse(cacheData)
-      return { props: { user } };
-    }
-
-    console.log("Cache failed")
-    
     const response = await axios.get(`http://localhost:4000/api/users/id/${id}`);
     console.log(response.data);
     const user = response.data;
-    await redis.set(cacheKey, JSON.stringify(user), 'EX', 3600);
-    
     return { props: { user } };
   
   } catch (error) {
@@ -45,6 +34,8 @@ const Users: React.FC<UserProps> = ({user}) => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('');
+  const [message, setMessage] = useState({ text: '', type: '' });
+  
   
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -68,8 +59,10 @@ const Users: React.FC<UserProps> = ({user}) => {
     }
     console.log(updateUser)
 
+    setMessage({ text: 'Updating user...', type: 'info' });
     axios.patch("http://localhost:4000/api/users", updateUser) 
       .then(response => {
+        setMessage({ text: 'user updated sucessfully', type: 'info' });
           console.log('user updated successfully:', response.data);
           setTimeout(() => {
             router.reload();
@@ -77,6 +70,7 @@ const Users: React.FC<UserProps> = ({user}) => {
         })
       .catch(error => {
           console.error('There was an error updating the user!', error);
+          setMessage({ text: 'Error updating user', type: 'error' });
       });
   }
 
@@ -93,7 +87,15 @@ const Users: React.FC<UserProps> = ({user}) => {
 
       <div className="p-4">
         <h3 className="text-lg font-medium text-gray-800 mb-3">Update {user.first_name} {user.last_name}</h3>
-        
+        {message.text && (
+                <div className={`mb-4 p-2 rounded text-sm ${
+                    message.type === 'success' ? 'bg-green-100 text-green-800' : 
+                    message.type === 'error' ? 'bg-red-100 text-red-800' : 
+                    'bg-blue-100 text-blue-800'
+                }`}>
+                    {message.text}
+                </div>
+            )}
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>

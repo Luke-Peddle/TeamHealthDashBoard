@@ -3,19 +3,8 @@ import axios from "axios";
 import AddingUser from './addingUser/addingUser';
 import UsersList from './UsersList/UsersList';
 import {User} from '@/types/user';
-import redis from '@/lib/redis';
-import { RefreshCw } from 'lucide-react';
 
-export async function getServerSideProps(context) {
-  const clearCache = context.query.clearCache === 'true';
-
-  if(clearCache){
-    try{
-      redis.flushall();
-    } catch (error) {
-      console.error('Error clearing cache:', error);
-    }
-  }
+export async function getServerSideProps() {
   
   try {
     const response = await axios.get("http://localhost:4000/api/users");
@@ -34,36 +23,43 @@ interface UsersProps {
 
 const Page: React.FC<UsersProps> = ({ users }) => {
   const clearCache = () => {
-    window.location.href = `${window.location.pathname}?clearCache=true`;
+     axios.get("http://localhost:4000/api/cache/clearCache" )
+     .then(response => {
+      console.log('Cache Cleared: ' +  response.data);
+      
+    })
+  .catch(error => {
+      console.error('There was an error clearing the cache', error);
+  });
   }
 
   return (
     <div className="bg-gray-50 min-h-screen py-8 px-4">
       <div className="max-w-6xl mx-auto">
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">User Management Dashboard</h1>
-          <p className="text-gray-600 mt-2">Manage your system users and their permissions</p>
-        </header>
+        
 
-        <div className="grid gap-8 lg:grid-cols-5">
+        <div className="flex justify-center ">
           <div className="lg:col-span-3">
             <UsersList users={users}/>
+            <br/>
             
-            <div className="mt-4 flex justify-end">
+            
+         
+          </div>
+          
+          
+        </div>
+        <div className="lg:col-span-2">
+            <AddingUser /> 
+            <div className="mt-4 flex justify-center">
               <button 
                 onClick={clearCache}
                 className="flex items-center px-3 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md transition-colors duration-150 text-sm"
               >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Refresh Cache
+                Clear Cache
               </button>
             </div>
           </div>
-          
-          <div className="lg:col-span-2">
-            <AddingUser /> 
-          </div>
-        </div>
       </div>
     </div>
   )

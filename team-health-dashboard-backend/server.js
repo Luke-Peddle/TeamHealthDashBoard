@@ -1,5 +1,6 @@
 const express = require("express");
 const userRoutes = require('./routes/users');
+const clearCacheRoute = require('./routes/clearCache');
 const cors = require('cors');
 
 
@@ -10,6 +11,7 @@ app.use(cors());
 
 
 app.use('/api/users', userRoutes);
+app.use('/api/cache', clearCacheRoute);
 
 app.get('/', (req, res) => {
     res.json({ message: 'Welcome to the Express backend for Next.js application' });

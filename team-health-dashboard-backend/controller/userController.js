@@ -7,9 +7,7 @@ const redisClient = require('../utils/redis')
 
 const userController = {
     
-    async connectToRedis(){
-       
-    },
+    
 
     async removeKey(id){
         await redisClient.del(`user: ${id}`)
@@ -29,19 +27,27 @@ async getAllUsers(req, res) {
 },
 
 async getUsers(req, res) {
-
-    
-
     console.log(req.params)
     const id = req.params.id;
     console.log("id: " + id)
+
+    const cacheKey = `user:${id}`;
+        const cacheData = await redisClient.get(cacheKey);
+    
+        if(cacheData){
+          const user = JSON.parse(cacheData)
+          console.log(user);
+          res.status(201).json(user)
+                }
+
+
      const user = await userModel.getUser(id);
-     
+     await redisClient.set(`user:${id}`, JSON.stringify(user));
+     console.log(user)
      res.status(201).json(user);
 },
 
 async updateUser(req, res) {
-    await redisClient.connect();
     console.log(req.params)
     const { user_id, username,password, first_name,last_name,email, role } = req.body;
     console.log(user_id, username,password, first_name,last_name,email, role)
