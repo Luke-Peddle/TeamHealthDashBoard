@@ -59,6 +59,25 @@ const projectModules = {
                 throw error;
               }
         },
+        async updateProjrct(id, name, manager ){
+            try{
+                
+                const results = await db.query(
+                    ' UPDATE project  SET name = $2, manager = $3 WHERE id = $1',
+                    [id,name, manager]
+                    
+                )
+        
+                console.log(results)
+                return results.rows[0];
+        
+            }
+            catch (error) {
+                console.log(error)
+                throw error;
+                }
+        },
+        
 
         async deleteProject(id){
             try{

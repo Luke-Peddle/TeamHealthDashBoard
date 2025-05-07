@@ -34,6 +34,14 @@ const projectController = {
         const projects = await projectModules.getAllProjects();
         res.status(201).json(projects);
     },
+
+    async updateProject(req, res) {
+            console.log(req.params)
+            const id = req.params.id
+            const {  name, manager } = req.body;
+             const updatedProject = await projectModules.updateProjrct(id, name, manager);
+             res.status(201).json(updatedProject);   
+        },
     async DeleteProject(req, res) {
 
         console.log(req.params)
