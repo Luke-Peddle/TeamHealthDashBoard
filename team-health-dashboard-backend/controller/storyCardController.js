@@ -35,6 +35,14 @@ const storyCardController = {
          console.log(storyCards)
          res.status(201).json(storyCards);
     },
+    async DeleteStoryCard(req, res) {
+
+        console.log(req.params)
+        const id = req.params.id;
+        console.log("id: " + id)
+        const response = await storyCardModules.deleteStoryCard(id);    
+         res.status(201).json(response);
+    },
 }
 
 module.exports = storyCardController;

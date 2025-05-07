@@ -34,6 +34,15 @@ const projectController = {
         const projects = await projectModules.getAllProjects();
         res.status(201).json(projects);
     },
+    async DeleteProject(req, res) {
+
+        console.log(req.params)
+        const id = req.params.id;
+        console.log("id: " + id)
+        const response = await projectModules.deleteProject(id);    
+         res.status(201).json(response);
+    },
+
 }
 
 module.exports = projectController;

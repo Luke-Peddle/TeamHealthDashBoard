@@ -26,8 +26,7 @@ const sprintModules = {
         try{
                 const results = await db.query(
                             'SELECT * FROM sprints WHERE project_id = $1',
-                            [project_id]
-                            
+                            [project_id]  
                         )
 
             console.log(results)
@@ -56,6 +55,24 @@ const sprintModules = {
                 throw error;
               }
         },
+
+        async deleteSprint(id){
+                    try{
+                        
+                        const results = await db.query(
+                            ' DELETE FROM sprints WHERE id = $1',
+                            [id]
+                        )
+                
+                        console.log(results)
+                        return results.rows;
+                
+                    }
+                    catch (error) {
+                        console.log(error)
+                        throw error;
+                        }
+                }
 }
 
 module.exports = sprintModules;

@@ -1,5 +1,6 @@
 const sprintModudles = require('../modules/sprintModules');
 const redisClient = require('../utils/redis');
+const storyCardModules = require('../modules/storyCardsModules')
 
 const sprintContoller = {
     async createSprint(req, res) {
@@ -35,6 +36,17 @@ const sprintContoller = {
          console.log(sprints)
          res.status(201).json(sprints);
     },
+
+    async DeleteSprint(req, res) {
+
+        console.log(req.params)
+        const id = req.params.id;
+        console.log("id: " + id)
+        await storyCardModules.deleteStoryCard(id); 
+        const response = await sprintModudles.deleteSprint(id);    
+         res.status(201).json(response);
+    },
+
 }
 
 module.exports = sprintContoller;

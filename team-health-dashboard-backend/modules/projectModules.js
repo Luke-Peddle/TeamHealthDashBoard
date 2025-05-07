@@ -59,6 +59,24 @@ const projectModules = {
                 throw error;
               }
         },
+
+        async deleteProject(id){
+            try{
+                
+                const results = await db.query(
+                    ' DELETE FROM project WHERE id = $1',
+                    [id]
+                )
+        
+                console.log(results)
+                return results.rows;
+        
+            }
+            catch (error) {
+                console.log(error)
+                throw error;
+                }
+        }
 }
 
 module.exports = projectModules;
