@@ -3,6 +3,8 @@ const userRoutes = require('./routes/users');
 const clearCacheRoute = require('./routes/clearCache');
 const projectRoutes = require('./routes/project');
 const sprintRoutes = require('./routes/sprint');
+const storyCardRoutes = require('./routes/storyCard');
+
 
 const cors = require('cors');
 
@@ -17,6 +19,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/cache', clearCacheRoute);
 app.use('/api/project', projectRoutes);
 app.use('/api/sprint', sprintRoutes);
+app.use('/api/storyCard', storyCardRoutes);
+
 
 app.get('/', (req, res) => {
     res.json({ message: 'Welcome to the Express backend for Next.js application' });
