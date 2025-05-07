@@ -7,7 +7,7 @@ interface UsersProps {
   }
 
 
-const Users: React.FC<UsersProps> = ({ users} ) => {
+const UsersList: React.FC<UsersProps> = ({ users} ) => {
     console.log(users);
     
     const userList = Array.isArray(users) ? users : [];
@@ -19,13 +19,12 @@ const Users: React.FC<UsersProps> = ({ users} ) => {
     ) : (
         <div className="grid gap-4">
             {userList.map(user => (
-                <div key={user.id} className="p-3 border rounded shadow-sm">
-                    <h3 className="font-semibold">{ user.userName}</h3>
-                    <p>{user.firstName}</p>
-                    <p>{user.lastName}</p>
-                    <p>{user.email}</p>
-                    <p>Role: {user.role}</p>
-                </div>
+                <a href = {`/admin/userManagement/id/${user.user_id}`}>
+                <div key={user.user_id} className='border-2 border-solid'>
+                    <h3 className="font-semibold">
+                        {user.first_name} {user.last_name}</h3>
+                    <p> {user.role}</p>
+                </div></a>
             ))}
         </div>
     )}
@@ -33,4 +32,4 @@ const Users: React.FC<UsersProps> = ({ users} ) => {
   )
 }
 
-export default Users
+export default UsersList
