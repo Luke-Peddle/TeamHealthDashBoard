@@ -8,6 +8,27 @@ const projectController = {
         const newProject = await projectModules.createProject( name, manager);
         res.status(201).json(newProject);
     },
+
+    async getProjectById(req, res) {
+        console.log(req.params)
+        const id = req.params.id;
+        console.log("id: " + id)
+    
+        const cacheKey = `projects:${id}`;
+        const cacheData = await redisClient.get(cacheKey);
+        
+        // if(cacheData){
+        //     const projects = JSON.parse(cacheData)
+        //     console.log(projects);
+        //     res.status(201).json(projects)
+        //         }
+
+    
+         const project = await projectModules.getProjectById(id);
+         await redisClient.set(`projects:${id}`, JSON.stringify(project));
+         console.log(project)
+         res.status(201).json(project);
+    },
     async getProjectByManagerId(req, res) {
         console.log(req.params)
         const id = req.params.id;
