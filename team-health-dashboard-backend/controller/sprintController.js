@@ -16,6 +16,27 @@ const sprintContoller = {
         res.status(201).json(sprints);
     },
 
+    async getSprintById(req, res) {
+        console.log(req.params)
+        const id = req.params.id;
+        console.log("id: " + id)
+    
+        const cacheKey = `sprint:${id}`;
+        const cacheData = await redisClient.get(cacheKey);
+        
+        // if(cacheData){
+        //     const projects = JSON.parse(cacheData)
+        //     console.log(projects);
+        //     res.status(201).json(projects)
+        //         }
+
+    
+         const sprint = await sprintModudles.getSprintById(id);
+         await redisClient.set(`sprint:${id}`, JSON.stringify(sprint));
+         console.log(sprint)
+         res.status(201).json(sprint);
+    },
+
     async getSprintByProjectId(req, res) {
         console.log(req.params)
         const id = req.params.id;
