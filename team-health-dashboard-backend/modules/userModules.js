@@ -1,4 +1,4 @@
-const db = require('../db')
+const db = require('../utils/db')
 
 const userModel ={
 
@@ -41,6 +41,43 @@ const userModel ={
                'SELECT * FROM users WHERE user_id = $1',
                 [id]
                 
+            )
+    
+            console.log(results)
+            return results.rows[0];
+    
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+          }
+    },
+
+    async updateUser(id, username, firstName,lastName, email, role){
+        try{
+           
+            const results = await db.query(
+               ' UPDATE users  SET username = $2,first_name = $3,last_name = $4,email = $5,role = $6 WHERE user_id = $1',
+                [id,username, firstName,lastName, email, role]
+                
+            )
+    
+            console.log(results)
+            return results.rows;
+    
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+          }
+    },
+
+    async deleteUser(id){
+        try{
+           
+            const results = await db.query(
+               ' DELETE FROM users WHERE user_id = $1',
+                [id]
             )
     
             console.log(results)
