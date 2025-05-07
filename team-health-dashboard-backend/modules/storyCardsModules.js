@@ -23,7 +23,25 @@ const storyCardsModules = {
         
     },
 
-    async getAllStoryCards(){
+    async getStoryCardsBySprintId(sprint_id){
+            try{
+                 const results = await db.query(
+                               'SELECT * FROM story_cards WHERE sprint_id = $1',
+                                [sprint_id]
+                                
+                            )
+    
+                console.log(results)
+                return results.rows;
+    
+            }
+            catch (error) {
+                console.log(error)
+                throw error;
+              }
+        },
+
+        async getAllStoryCards(){
             try{
                 const results = await db.query(
                     'SELECT * FROM story_cards ',

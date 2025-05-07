@@ -22,6 +22,23 @@ const sprintModules = {
         
         
     },
+    async getSprintsByProjectId(project_id){
+        try{
+                const results = await db.query(
+                            'SELECT * FROM sprints WHERE project_id = $1',
+                            [project_id]
+                            
+                        )
+
+            console.log(results)
+            return results.rows;
+
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+            }
+    },
 
     async getAllSprints(){
             try{

@@ -23,6 +23,26 @@ const projectModules = {
         
     },
 
+    async getProjectByManagerId(manager_id){
+            try{
+                    const results = await db.query(
+                                'SELECT * FROM project WHERE manager = $1',
+                                [manager_id]
+                                
+                            )
+    
+                console.log(results)
+                return results.rows;
+    
+            }
+            catch (error) {
+                console.log(error)
+                throw error;
+                }
+        },
+
+    
+
     async getAllProjects(){
             try{
                 const results = await db.query(

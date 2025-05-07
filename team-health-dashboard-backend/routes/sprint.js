@@ -4,5 +4,6 @@ const sprintContoller = require('../controller/sprintController');
 
 router.post('/', sprintContoller.createSprint);
 router.get('/', sprintContoller.getAllSprints);
+router.get('/:id', sprintContoller.getSprintByProjectId);
 
 module.exports = router;
