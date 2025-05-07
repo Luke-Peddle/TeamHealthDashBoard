@@ -31,7 +31,7 @@ const sprintContoller = {
         //         }
 
     
-         const sprint = await sprintModudles.getSprintById(id);
+         const storyCard = await sprintModudles.getSprintById(id);
          await redisClient.set(`sprint:${id}`, JSON.stringify(sprint));
          console.log(sprint)
          res.status(201).json(sprint);

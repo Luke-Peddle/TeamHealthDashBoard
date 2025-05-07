@@ -15,6 +15,28 @@ const storyCardController = {
         res.status(201).json(storyCard);
     },
 
+    async getStoryCardById(req, res) {
+        console.log(req.params)
+        const id = req.params.id;
+        console.log("id: " + id)
+    
+        const cacheKey = `storyCard:${id}`;
+        const cacheData = await redisClient.get(cacheKey);
+        
+        // if(cacheData){
+        //     const projects = JSON.parse(cacheData)
+        //     console.log(projects);
+        //     res.status(201).json(projects)
+        //         }
+
+    
+         const storyCard = await storyCardModules.getStoryCardById(id);
+         await redisClient.set(`sprint:${id}`, JSON.stringify(storyCard));
+         console.log(storyCard)
+         res.status(201).json(storyCard);
+    },
+
+
     async getStoryCardBySprintId(req, res) {
         console.log(req.params)
         const id = req.params.id;
