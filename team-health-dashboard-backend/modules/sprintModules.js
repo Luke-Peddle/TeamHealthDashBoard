@@ -56,6 +56,25 @@ const sprintModules = {
               }
         },
 
+        async updatSprint(id, start_date, end_date ){
+                        try{
+                           
+                            const results = await db.query(
+                               ' UPDATE sprints  SET start_date = $2, end_date = $3 WHERE id = $1',
+                                [id,start_date, end_date]
+                                
+                            )
+                    
+                            console.log(results)
+                            return results.rows;
+                    
+                        }
+                        catch (error) {
+                            console.log(error)
+                            throw error;
+                          }
+                    },
+
         async deleteSprint(id){
                     try{
                         

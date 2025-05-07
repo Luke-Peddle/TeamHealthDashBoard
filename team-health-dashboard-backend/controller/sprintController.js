@@ -37,6 +37,14 @@ const sprintContoller = {
          res.status(201).json(sprints);
     },
 
+    async updateSprint(req, res) {
+        console.log(req.params);
+        const id = req.params.id;
+        const { start_date, end_date } = req.body;
+         const updatedSprint = await sprintModudles.updatSprint(id,start_date, end_date);
+         res.status(201).json(updatedSprint);   
+    },
+
     async DeleteSprint(req, res) {
 
         console.log(req.params)
