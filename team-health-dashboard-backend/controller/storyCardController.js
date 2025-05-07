@@ -35,6 +35,14 @@ const storyCardController = {
          console.log(storyCards)
          res.status(201).json(storyCards);
     },
+
+    async updateStoryCarde(req, res) {
+        console.log(req.params);
+        const id = req.params.id;
+        const { discription } = req.body;
+         const updatedStoryCard = await storyCardModules.updatStoryCard(id,discription);
+         res.status(201).json(updatedStoryCard);   
+    },
     async DeleteStoryCard(req, res) {
 
         console.log(req.params)

@@ -58,6 +58,25 @@ const storyCardsModules = {
               }
         },
 
+         async updatStoryCard(id, discription, ){
+                try{
+                   
+                    const results = await db.query(
+                       ' UPDATE story_cards  SET description = $2 WHERE id = $1',
+                        [id,discription]
+                        
+                    )
+            
+                    console.log(results)
+                    return results.rows;
+            
+                }
+                catch (error) {
+                    console.log(error)
+                    throw error;
+                  }
+            },
+
         async deleteStoryCard(id){
             try{
                 
