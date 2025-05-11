@@ -6,6 +6,7 @@ const storyCardController = {
 
         const { discription, sprint } = req.body;
         const newStoryCard = await storyCardModules.createStoryCard( discription, sprint);
+        await redisClient.del(`storyCard_Sprint:${sprint}`)
         res.status(201).json(newStoryCard);
     },
 
@@ -23,15 +24,15 @@ const storyCardController = {
         const cacheKey = `storyCard:${id}`;
         const cacheData = await redisClient.get(cacheKey);
         
-        // if(cacheData){
-        //     const projects = JSON.parse(cacheData)
-        //     console.log(projects);
-        //     res.status(201).json(projects)
-        //         }
+        if(cacheData){
+            const storyCard = JSON.parse(cacheData)
+            console.log(storyCard);
+            res.status(201).json(storyCard)
+                }
 
     
          const storyCard = await storyCardModules.getStoryCardById(id);
-         await redisClient.set(`sprint:${id}`, JSON.stringify(storyCard));
+         await redisClient.set(`storyCard:${id}`, JSON.stringify(storyCard));
          console.log(storyCard)
          res.status(201).json(storyCard);
     },
@@ -42,7 +43,7 @@ const storyCardController = {
         const id = req.params.id;
         console.log("id: " + id)
     
-        const cacheKey = `storyCards:${id}`;
+        const cacheKey = `storyCard_Sprint:${id}`;
             const cacheData = await redisClient.get(cacheKey);
         
             if(cacheData){
@@ -53,7 +54,7 @@ const storyCardController = {
     
     
          const storyCards = await storyCardModules.getStoryCardsBySprintId(id);
-         await redisClient.set(`storyCards:${id}`, JSON.stringify(storyCards));
+         await redisClient.set(`storyCard_Sprint:${id}`, JSON.stringify(storyCards));
          console.log(storyCards)
          res.status(201).json(storyCards);
     },
@@ -63,14 +64,18 @@ const storyCardController = {
         const id = req.params.id;
         const { discription } = req.body;
          const updatedStoryCard = await storyCardModules.updatStoryCard(id,discription);
+         await redisClient.del(`storyCard:${id}`)
          res.status(201).json(updatedStoryCard);   
     },
     async DeleteStoryCard(req, res) {
 
         console.log(req.params)
         const id = req.params.id;
+        const sprint_id = req.params.sprint_id;
         console.log("id: " + id)
-        const response = await storyCardModules.deleteStoryCard(id);    
+        const response = await storyCardModules.deleteStoryCard(id);
+        await redisClient.del(`storyCard:${id}`)
+        await redisClient.del(`storyCard_Sprint:${sprint_id}`)
          res.status(201).json(response);
     },
 }
