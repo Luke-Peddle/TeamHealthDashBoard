@@ -96,7 +96,7 @@ const sprintModules = {
                     try{
                         
                         const results = await db.query(
-                            ' DELETE FROM sprints WHERE id = $1',
+                            ' DELETE FROM sprints WHERE project_id = $1',
                             [id]
                         )
                 

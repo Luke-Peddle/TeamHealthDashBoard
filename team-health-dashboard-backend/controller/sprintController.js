@@ -5,8 +5,9 @@ const storyCardModules = require('../modules/storyCardsModules')
 const sprintContoller = {
     async createSprint(req, res) {
 
-        const { start_date, end_date, project } = req.body;
-        const newSprint = await sprintModudles.createSprint( start_date, end_date, project);
+        const { start_date, end_date, project_id } = req.body;
+        const newSprint = await sprintModudles.createSprint( start_date, end_date, project_id);
+        await redisClient.del(`sprint_project:${project_id}`)
         res.status(201).json(newSprint);
     },
 
@@ -24,14 +25,14 @@ const sprintContoller = {
         const cacheKey = `sprint:${id}`;
         const cacheData = await redisClient.get(cacheKey);
         
-        // if(cacheData){
-        //     const projects = JSON.parse(cacheData)
-        //     console.log(projects);
-        //     res.status(201).json(projects)
-        //         }
+        if(cacheData){
+            const projects = JSON.parse(cacheData)
+            console.log(projects);
+            res.status(201).json(projects)
+                }
 
     
-         const storyCard = await sprintModudles.getSprintById(id);
+         const sprint = await sprintModudles.getSprintById(id);
          await redisClient.set(`sprint:${id}`, JSON.stringify(sprint));
          console.log(sprint)
          res.status(201).json(sprint);
@@ -42,7 +43,7 @@ const sprintContoller = {
         const id = req.params.id;
         console.log("id: " + id)
     
-        const cacheKey = `sprint:${id}`;
+        const cacheKey = `sprint_project:${id}`;
             const cacheData = await redisClient.get(cacheKey);
         
             if(cacheData){
@@ -53,7 +54,7 @@ const sprintContoller = {
     
     
          const sprints = await sprintModudles.getSprintsByProjectId(id);
-         await redisClient.set(`storyCards:${id}`, JSON.stringify(sprints));
+         await redisClient.set(`sprint_project:${id}`, JSON.stringify(sprints));
          console.log(sprints)
          res.status(201).json(sprints);
     },
@@ -63,6 +64,8 @@ const sprintContoller = {
         const id = req.params.id;
         const { start_date, end_date } = req.body;
          const updatedSprint = await sprintModudles.updatSprint(id,start_date, end_date);
+         await redisClient.del(`sprint:${id}`)
+
          res.status(201).json(updatedSprint);   
     },
 
@@ -70,9 +73,11 @@ const sprintContoller = {
 
         console.log(req.params)
         const id = req.params.id;
+        const project_id = req.params.project_id;
         console.log("id: " + id)
         await storyCardModules.deleteStoryCard(id); 
-        const response = await sprintModudles.deleteSprint(id);    
+        const response = await sprintModudles.deleteSprint(id);
+        await redisClient.del(`sprint_project:${project_id}`)    
          res.status(201).json(response);
     },
 

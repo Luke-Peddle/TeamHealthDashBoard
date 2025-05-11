@@ -7,7 +7,7 @@ router.get('/', sprintContoller.getAllSprints);
 router.patch('/:id', sprintContoller.updateSprint);
 router.get('/:id', sprintContoller.getSprintById);
 router.get('/project/:id', sprintContoller.getSprintByProjectId);
-router.delete('/:id', sprintContoller.DeleteSprint);
+router.delete('/:id/:project_id', sprintContoller.DeleteSprint);
 
 
 module.exports = router;
