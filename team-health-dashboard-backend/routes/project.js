@@ -7,7 +7,7 @@ router.get('/', projectController.getAllProjects);
 router.get('/:id', projectController.getProjectById);
 router.get('/manager/:id', projectController.getProjectByManagerId);
 router.patch('/:id', projectController.updateProject);
-router.delete('/:id', projectController.DeleteProject);
+router.delete('/:id/:manager_id', projectController.DeleteProject);
 
 
 
