@@ -88,7 +88,25 @@ const userModel ={
             console.log(error)
             throw error;
           }
-    }
+    },
+
+    async getContributors(){
+        const role = "contributor"
+        try{
+            const results = await db.query(
+               'SELECT * FROM users WHERE role = $1',
+                [role]
+            )
+    
+            console.log(results)
+            return results.rows[0];
+    
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+          }
+    },
 }
 
 

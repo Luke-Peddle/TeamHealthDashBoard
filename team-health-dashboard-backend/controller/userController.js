@@ -68,6 +68,25 @@ async DeleteUsers(req, res) {
 
      res.status(201).json(response);
 },
+
+async getContributors(req, res) {
+   
+
+    // const cacheKey = `users:${id}`;
+    //     const cacheData = await redisClient.get(cacheKey);
+    
+    //     if(cacheData){
+    //       const user = JSON.parse(cacheData)
+    //       console.log(user);
+    //       res.status(201).json(user)
+    //             }
+
+
+     const users = await userModel.getContributors();
+    //  await redisClient.set(`user:${id}`, JSON.stringify(user));
+     console.log(users)
+     res.status(201).json(users);
+}
 }
 
 module.exports = userController;

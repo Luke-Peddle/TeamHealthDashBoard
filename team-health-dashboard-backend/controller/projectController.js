@@ -83,7 +83,10 @@ const projectController = {
 
         const project_id = req.params.project_id;
         const user_id = req.params.user_id;
-        const newMember = await projectModules.createProject( project_id, user_id);
+        console.log(project_id, user_id)
+        const newMember = await projectModules.addContributor( project_id, user_id);
+
+        console.log(newMember)
 
 
         res.status(201).json(newMember);
