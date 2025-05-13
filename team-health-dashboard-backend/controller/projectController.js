@@ -79,6 +79,16 @@ const projectController = {
          res.status(201).json(response);
     },
 
+    async addMemberToProject(req, res) {
+
+        const project_id = req.params.project_id;
+        const user_id = req.params.user_id;
+        const newMember = await projectModules.createProject( project_id, user_id);
+
+
+        res.status(201).json(newMember);
+    },
+
 }
 
 module.exports = projectController;

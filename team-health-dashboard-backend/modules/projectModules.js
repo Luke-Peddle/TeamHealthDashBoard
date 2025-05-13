@@ -31,7 +31,7 @@ const projectModules = {
                         )
 
             console.log(results)
-            return results.rows;
+            return results.rows[0];
 
         }
         catch (error) {
@@ -112,7 +112,25 @@ const projectModules = {
                 console.log(error)
                 throw error;
                 }
-        }
+        },
+
+    async addContributor(project_id,user_id){
+         try{
+                
+                const results = await db.query(
+                   'INSERT INTO project_members(project_id, user_id) VALUES ($1,$2)',
+                    [project_id,user_id ]
+                )
+        
+                console.log(results)
+                return results.rows;
+        
+            }
+            catch (error) {
+                console.log(error)
+                throw error;
+                }
+    }
 }
 
 module.exports = projectModules;
