@@ -23,14 +23,14 @@ const projectController = {
          if(cacheData){
             const projects = JSON.parse(cacheData)
              console.log(projects);
-            res.status(201).json(projects)
+            return res.status(200).json(projects)
                }
 
     
          const project = await projectModules.getProjectById(id);
          await redisClient.set(`project:${id}`, JSON.stringify(project));
          console.log(project)
-         res.status(201).json(project);
+         return res.status(200).json(project);
     },
     async getProjectByManagerId(req, res) {
         console.log(req.params)
@@ -43,14 +43,14 @@ const projectController = {
         if(cacheData){
             const projects = JSON.parse(cacheData)
             console.log(projects);
-            res.status(201).json(projects)
+            return res.status(201).json(projects)
                 }
 
     
          const projects = await projectModules.getProjectByManagerId(id);
          await redisClient.set(`projects_manager:${id}`, JSON.stringify(projects));
          console.log(projects)
-         res.status(201).json(projects);
+         return res.status(201).json(projects);
     },
 
     async getAllProjects(req, res) {

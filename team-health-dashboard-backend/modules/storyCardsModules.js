@@ -6,8 +6,8 @@ const storyCardsModules = {
 
         try{
             const results = await db.query(
-            'INSERT INTO story_cards(description,sprint_id) VALUES ($1,$2)',
-            [description,sprint ]
+            'INSERT INTO story_cards(description,project_id,completed) VALUES ($1,$2,$3)',
+            [description,sprint,false]
             )
 
             console.log(results)
@@ -41,10 +41,10 @@ const storyCardsModules = {
         }
     },
 
-    async getStoryCardsBySprintId(sprint_id){
+    async getStoryCardsByProjectId(sprint_id){
             try{
                  const results = await db.query(
-                               'SELECT * FROM story_cards WHERE sprint_id = $1',
+                               'SELECT * FROM story_cards WHERE project_id = $1',
                                 [sprint_id]
                                 
                             )
@@ -99,7 +99,7 @@ const storyCardsModules = {
             try{
                 
                 const results = await db.query(
-                    ' DELETE FROM story_cards WHERE sprint_id = $1',
+                    'DELETE FROM story_cards WHERE id = $1',
                     [id]
                 )
         

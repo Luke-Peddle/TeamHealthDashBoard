@@ -28,14 +28,14 @@ const sprintContoller = {
         if(cacheData){
             const projects = JSON.parse(cacheData)
             console.log(projects);
-            res.status(201).json(projects)
+            return res.status(201).json(projects)
                 }
 
     
          const sprint = await sprintModudles.getSprintById(id);
          await redisClient.set(`sprint:${id}`, JSON.stringify(sprint));
          console.log(sprint)
-         res.status(201).json(sprint);
+         return res.status(201).json(sprint);
     },
 
     async getSprintByProjectId(req, res) {
@@ -49,14 +49,16 @@ const sprintContoller = {
             if(cacheData){
               const sprints = JSON.parse(cacheData)
               console.log(sprints);
-              res.status(201).json(sprints)
-                    }
+              return res.status(200).json(sprints)
+                }
     
     
          const sprints = await sprintModudles.getSprintsByProjectId(id);
+         console.log("Sptints: " + sprints)
          await redisClient.set(`sprint_project:${id}`, JSON.stringify(sprints));
+         console.log("Before sending response, headers sent?", res.headersSent);
          console.log(sprints)
-         res.status(201).json(sprints);
+         return res.status(200).json(sprints);
     },
 
     async updateSprint(req, res) {
