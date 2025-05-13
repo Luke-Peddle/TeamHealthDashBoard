@@ -18,7 +18,7 @@ const ProjectDetails = ({project}) => {
     
   return (
     <div className="group relative">
-            <a href ={`http://localhost:3000/dashbaord/manager/projects/id/${project.id}`} className="block">
+            <a href ={`http://localhost:3000/dashbaord/manager/projects/${project.id}`} className="block">
         <h3>{project.name}</h3>
         </a>
 

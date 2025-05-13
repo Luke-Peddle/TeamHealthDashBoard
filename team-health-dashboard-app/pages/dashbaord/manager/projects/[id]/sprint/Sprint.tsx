@@ -5,9 +5,7 @@ export async function getServerSideProps(context) {
     const { id } = context.params;
   
     try {
-        [];
-      const response = await axios.get(`http://localhost:4000/api/sprints/${id}`);
-      console.log(response.data);
+      const response = await axios.get(`http://localhost:4000/api/sprint/project/${id}`);
       const sprints = response.data;
       return { props: { sprints } };
     } catch (error) {
@@ -17,8 +15,10 @@ export async function getServerSideProps(context) {
   }
 
 const Sprint = (sprints) => {
+  console.log("sprints: " + sprints[0]);
   return (
-    <div>{sprints[0].start_date}</div>
+    // <div>{sprints[0].start_date}</div>
+    <div></div>
   )
 }
 

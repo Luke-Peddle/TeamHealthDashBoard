@@ -14,7 +14,7 @@ const user = {
 };
 
 export async function getServerSideProps() {
-  
+  console.log('enter')
   try {
     const response = await axios.get(`http://localhost:4000/api/project/manager/${user.user_id}`);
     console.log(response.data);
