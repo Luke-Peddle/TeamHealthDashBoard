@@ -2,6 +2,7 @@ import React from 'react'
 import { Separator } from '@/components/ui/separator';
 import Sprint from '../sprint/Sprint';
 import Members from '../Member/MembersList';
+import AddMember from '../Member/AddMember';
 import AddSprint from '../sprint/addSprint';
 import {
   Sheet,
@@ -14,6 +15,7 @@ import {
 const SidePanel = ({
     sprints,
     members,
+    nonTeamMembers,
     isOpen = false,
     onOpenChange}) => {
         console.log(members)
@@ -52,6 +54,8 @@ const SidePanel = ({
           
           <Separator />
           <div>
+            <AddMember members ={nonTeamMembers} />
+            <br />
             <Members members ={members} />
           </div>
           

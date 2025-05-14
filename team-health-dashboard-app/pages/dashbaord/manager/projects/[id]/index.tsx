@@ -12,21 +12,23 @@ export async function getServerSideProps(context) {
         const projectResponse = await axios.get(`http://localhost:4000/api/project/${id}`);
         const sprintResponse = await axios.get(`http://localhost:4000/api/sprint/project/${id}`);
         const teamMembersResponse = await axios.get(`http://localhost:4000/api/users/teamMembers/${id}`);
+        const nonTeamMembersResponse = await axios.get(`http://localhost:4000/api/users/nonTeamMembers/${id}`);
 
 
         const projectList = projectResponse.data;
         const project = projectList[0]
         const sprints = sprintResponse.data;
         const teamMembers = teamMembersResponse.data
+        const nonTeamMembers = nonTeamMembersResponse.data
         console.log(teamMembers)
-        return { props: { project, sprints, teamMembers } };
+        return { props: { project, sprints, teamMembers, nonTeamMembers } };
     } catch (error) {
         console.error('Server-side fetch error:', error);
         return { props: { project: {}, sprints: [], teamMembers: [] } };
     }
 }
 
-const Index = ({ project, sprints, teamMembers }) => {
+const Index = ({ project, sprints, teamMembers, nonTeamMembers }) => {
     const [isPanelOpen, setIsPanelOpen] = useState(false);
 
     return (
@@ -62,6 +64,7 @@ const Index = ({ project, sprints, teamMembers }) => {
       <SidePanel
         sprints = {sprints}
         members ={teamMembers}
+        nonTeamMembers ={nonTeamMembers}
         isOpen={isPanelOpen}
         onOpenChange={setIsPanelOpen}
       />
