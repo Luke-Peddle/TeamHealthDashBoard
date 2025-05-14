@@ -86,6 +86,48 @@ async getContributors(req, res) {
     //  await redisClient.set(`user:${id}`, JSON.stringify(user));
      console.log(users)
      res.status(201).json(users);
+},
+
+async getTeamMembers(req, res) {
+   
+    
+        const id = req.params.project_id;
+
+    // const cacheKey = `users:${id}`;
+    //     const cacheData = await redisClient.get(cacheKey);
+    
+    //     if(cacheData){
+    //       const user = JSON.parse(cacheData)
+    //       console.log(user);
+    //       res.status(201).json(user)
+    //             }
+
+
+     const users = await userModel.getTeamMembers(id);
+    //  await redisClient.set(`user:${id}`, JSON.stringify(user));
+     console.log(users)
+     res.status(201).json(users);
+},
+
+async getNonTeamMembers(req, res) {
+   
+    
+        const id = req.params.project_id;
+
+    // const cacheKey = `users:${id}`;
+    //     const cacheData = await redisClient.get(cacheKey);
+    
+    //     if(cacheData){
+    //       const user = JSON.parse(cacheData)
+    //       console.log(user);
+    //       res.status(201).json(user)
+    //             }
+
+
+     const users = await userModel.getUsersNotInProject(id);
+    //  await redisClient.set(`user:${id}`, JSON.stringify(user));
+     console.log(users)
+     res.status(201).json(users);
 }
 }
 

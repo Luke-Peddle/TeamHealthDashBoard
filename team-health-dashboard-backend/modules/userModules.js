@@ -107,6 +107,40 @@ const userModel ={
             throw error;
           }
     },
+    async getTeamMembers(id){
+        try{
+            const results = await db.query(
+               'SELECT DISTINCT u.* FROM users u JOIN project_members p ON u.user_id = p.user_id WHERE p.project_id = $1',
+                [id]
+            )
+    
+            console.log(results)
+            return results.rows;
+    
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+          }
+    },
+
+    async getUsersNotInProject(id){
+        const role = 'contributor'
+        try{
+            const results = await db.query(
+               'SELECT u.* FROM users u WHERE u.role = $2 AND u.user_id NOT IN (SELECT user_id FROM project_members WHERE project_id = $1)',
+                [id,role]
+            )
+    
+            console.log(results)
+            return results.rows;
+    
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+          }
+    },
 }
 
 
