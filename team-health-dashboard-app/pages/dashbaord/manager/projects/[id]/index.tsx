@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import SidePanel from '@/pages/components/projects/SidePannel/SidePAnnel';
+import EditProject from '@/pages/components/projects/EditProject';
 import { Button } from '@/components/ui/button';
 import { Menu, ChevronRight } from 'lucide-react';
 
 export async function getServerSideProps(context) {
     const { id } = context.params;
+    console.log(id)
     
   
     try {
@@ -15,12 +17,11 @@ export async function getServerSideProps(context) {
         const nonTeamMembersResponse = await axios.get(`http://localhost:4000/api/users/nonTeamMembers/${id}`);
 
 
-        const projectList = projectResponse.data;
-        const project = projectList[0]
+        const project = projectResponse.data;
         const sprints = sprintResponse.data;
         const teamMembers = teamMembersResponse.data
         const nonTeamMembers = nonTeamMembersResponse.data
-        console.log(teamMembers)
+        console.log("Project: "+ project)
         return { props: { project, sprints, teamMembers, nonTeamMembers } };
     } catch (error) {
         console.error('Server-side fetch error:', error);
@@ -62,6 +63,7 @@ const Index = ({ project, sprints, teamMembers, nonTeamMembers }) => {
       </Button>
 
       <SidePanel
+        project ={project}
         sprints = {sprints}
         members ={teamMembers}
         nonTeamMembers ={nonTeamMembers}
