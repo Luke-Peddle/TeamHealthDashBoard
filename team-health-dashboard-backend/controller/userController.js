@@ -128,7 +128,19 @@ async getNonTeamMembers(req, res) {
     //  await redisClient.set(`user:${id}`, JSON.stringify(user));
      console.log(users)
      res.status(201).json(users);
-}
+},
+
+async removeMember(req, res) {
+
+    console.log(req.params)
+    const user_id = req.params.user_id;
+    const project_id = req.params.project_id;
+
+    const response = await userModel.removeUserFromProject(project_id, user_id);
+    // await redisClient.del(`user:${id}`)
+
+     res.status(201).json(response);
+},
 }
 
 module.exports = userController;

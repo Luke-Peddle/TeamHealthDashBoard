@@ -11,6 +11,8 @@ router.get('/contributors', userController.getContributors);
 router.get('/id/:id', userController.getUsers);
 router.patch('/', userController.updateUser);
 router.delete('/id/:id', userController.DeleteUsers);
+router.delete('/removeMember/:project_id/:user_id', userController.removeMember);
+
 
 
 module.exports = router;

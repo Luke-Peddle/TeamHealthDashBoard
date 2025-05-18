@@ -4,6 +4,7 @@ import Sprint from '../sprint/Sprint';
 import Members from '../Member/MembersList';
 import AddMember from '../Member/AddMember';
 import AddSprint from '../sprint/addSprint';
+import EditProject from '@/pages/components/projects/EditProject';
 import {
   Sheet,
   SheetContent,
@@ -13,6 +14,7 @@ import {
 
 
 const SidePanel = ({
+    project,
     sprints,
     members,
     nonTeamMembers,
@@ -25,6 +27,7 @@ const SidePanel = ({
         side="right" 
         className="w-80 sm:max-w-sm overflow-y-auto fixed top-0 right-0 h-full"
       >
+        <EditProject project = {project} />
         <SheetHeader>
           <SheetTitle>Sprint & Team Management</SheetTitle>
         </SheetHeader>

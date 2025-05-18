@@ -141,6 +141,23 @@ const userModel ={
             throw error;
           }
     },
+
+    async removeUserFromProject(project_id, user_id){
+        try{
+            const results = await db.query(
+               'DELETE FROM project_members WHERE user_id = $2 AND project_id = $1',
+                [project_id, user_id]
+            )
+    
+            console.log(results)
+            return results.rows;
+    
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+          }
+    },
 }
 
 
