@@ -93,19 +93,20 @@ async getTeamMembers(req, res) {
     
         const id = req.params.project_id;
 
-    // const cacheKey = `users:${id}`;
-    //     const cacheData = await redisClient.get(cacheKey);
+    const cacheKey = `members:${id}`;
+        const cacheData = await redisClient.get(cacheKey);
     
-    //     if(cacheData){
-    //       const user = JSON.parse(cacheData)
-    //       console.log(user);
-    //       res.status(201).json(user)
-    //             }
+        if(cacheData){
+          const user = JSON.parse(cacheData)
+          console.log(user);
+         return res.status(201).json(user)
+                }
 
 
      const users = await userModel.getTeamMembers(id);
-    //  await redisClient.set(`user:${id}`, JSON.stringify(user));
-     console.log(users)
+     console.log(users);
+     await redisClient.set(`members:${id}`, JSON.stringify(users));
+
      res.status(201).json(users);
 },
 
@@ -114,18 +115,18 @@ async getNonTeamMembers(req, res) {
     
         const id = req.params.project_id;
 
-    // const cacheKey = `users:${id}`;
-    //     const cacheData = await redisClient.get(cacheKey);
+    const cacheKey = `nonMembers:${id}`;
+        const cacheData = await redisClient.get(cacheKey);
     
-    //     if(cacheData){
-    //       const user = JSON.parse(cacheData)
-    //       console.log(user);
-    //       res.status(201).json(user)
-    //             }
+        if(cacheData){
+          const user = JSON.parse(cacheData)
+          console.log(user);
+          return res.status(201).json(user)
+        }
 
 
      const users = await userModel.getUsersNotInProject(id);
-    //  await redisClient.set(`user:${id}`, JSON.stringify(user));
+     await redisClient.set(`nonMembers:${id}`, JSON.stringify(users));
      console.log(users)
      res.status(201).json(users);
 },
@@ -135,9 +136,12 @@ async removeMember(req, res) {
     console.log(req.params)
     const user_id = req.params.user_id;
     const project_id = req.params.project_id;
+    console.log(project_id);
 
     const response = await userModel.removeUserFromProject(project_id, user_id);
-    // await redisClient.del(`user:${id}`)
+    await redisClient.del(`members:${project_id}`);
+    await redisClient.del(`nonMembers:${project_id}`);
+
 
      res.status(201).json(response);
 },

@@ -82,12 +82,14 @@ const projectController = {
     async addMemberToProject(req, res) {
 
         const project_id = req.params.project_id;
+        console.log(project_id);
         const user_id = req.params.user_id;
         console.log(project_id, user_id)
         const newMember = await projectModules.addContributor( project_id, user_id);
 
         console.log(newMember)
-
+    await redisClient.del(`members:${project_id}`);
+    await redisClient.del(`nonMembers:${project_id}`);
 
         res.status(201).json(newMember);
     },
