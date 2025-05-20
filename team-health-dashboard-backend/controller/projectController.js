@@ -1,4 +1,6 @@
 const projectModules = require('../modules/projectModules');
+const sprintModules = require("../modules/sprintModules");
+const userModel = require('../modules/userModules')
 const redisClient = require('../utils/redis');
 
 const projectController = {
@@ -72,7 +74,10 @@ const projectController = {
         console.log(req.params)
         const id = req.params.id;
         const manager_id = req.params.manager_id;
-        console.log("id: " + id)
+        console.log("id: " + id);
+
+        await sprintModules.deleteSprintbyProjectId(id)
+        await userModel.removeUserFromProjectByProject_id(id)
         const response = await projectModules.deleteProject(id); 
         await redisClient.del(`project:${id}`)
         await redisClient.del(`projects_manager:${manager_id}`)      

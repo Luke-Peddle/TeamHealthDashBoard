@@ -2,12 +2,12 @@ const db = require('../utils/db')
 
 const sprintModules = {
 
-    async createSprint (start_date,end_date,project ) {
+    async createSprint (start_date,end_date,project,name ) {
 
         try{
             const results = await db.query(
-            'INSERT INTO sprints(start_date,end_date, project_id) VALUES ($1,$2,$3)',
-            [start_date,end_date,project ]
+            'INSERT INTO sprints(start_date,end_date, project_id, name) VALUES ($1,$2,$3,$4)',
+            [start_date,end_date,project,name ]
             )
 
             console.log(results)
@@ -44,6 +44,24 @@ const sprintModules = {
                 const results = await db.query(
                             'SELECT * FROM sprints WHERE project_id = $1',
                             [project_id]  
+                        )
+
+            console.log(results)
+            return results.rows;
+
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+            }
+    },
+
+    async getSprintsByProjectIDeAndSprintName(id,name){
+        console.log("Sprint id: " + id);
+        try{
+                const results = await db.query(
+                            'SELECT * FROM sprints WHERE project_id = $1 AND name = $2',
+                            [id,name]  
                         )
 
             console.log(results)
@@ -96,7 +114,7 @@ const sprintModules = {
                     try{
                         
                         const results = await db.query(
-                            ' DELETE FROM sprints WHERE project_id = $1',
+                            ' DELETE FROM sprints WHERE id = $1',
                             [id]
                         )
                 
@@ -108,7 +126,25 @@ const sprintModules = {
                         console.log(error)
                         throw error;
                         }
+                },
+
+    async deleteSprintbyProjectId(id){
+            try{
+                
+                const results = await db.query(
+                    ' DELETE FROM sprints WHERE project_id = $1',
+                    [id]
+                )
+        
+                console.log(results)
+                return results.rows;
+        
+            }
+            catch (error) {
+                console.log(error)
+                throw error;
                 }
+        }
 }
 
 module.exports = sprintModules;

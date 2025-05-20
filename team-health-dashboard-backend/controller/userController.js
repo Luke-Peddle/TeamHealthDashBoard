@@ -17,6 +17,7 @@ async createUser(req, res) {
 
     const { username, password, firstName,lastName,email, role } = req.body;
     const newUser = await userModel.createUser( username, password, firstName,lastName,email, role);
+    console.log(newUser)
     res.status(201).json(newUser);
 },
 

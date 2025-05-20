@@ -5,8 +5,8 @@ const storyCardModules = require('../modules/storyCardsModules')
 const sprintContoller = {
     async createSprint(req, res) {
 
-        const { start_date, end_date, project_id } = req.body;
-        const newSprint = await sprintModudles.createSprint( start_date, end_date, project_id);
+        const { start_date, end_date, project_id, name } = req.body;
+        const newSprint = await sprintModudles.createSprint( start_date, end_date, project_id,name);
         await redisClient.del(`sprint_project:${project_id}`)
         res.status(201).json(newSprint);
     },
@@ -39,6 +39,52 @@ const sprintContoller = {
     },
 
     async getSprintByProjectId(req, res) {
+        console.log(req.params)
+        const id = req.params.id;
+        console.log("id: " + id)
+    
+        const cacheKey = `sprint_project:${id}`;
+            const cacheData = await redisClient.get(cacheKey);
+        
+            if(cacheData){
+              const sprints = JSON.parse(cacheData)
+              console.log(sprints);
+              return res.status(200).json(sprints)
+                }
+    
+    
+         const sprints = await sprintModudles.getSprintsByProjectId(id);
+         console.log("Sptints: " + sprints)
+         await redisClient.set(`sprint_project:${id}`, JSON.stringify(sprints));
+         console.log("Before sending response, headers sent?", res.headersSent);
+         console.log(sprints)
+         return res.status(200).json(sprints);
+    },
+
+     async getSprintByProjectNameAndSprintId(req, res) {
+        console.log(req.params)
+        const name = req.params.project_name
+        const id = req.params.id;
+        console.log("id: " + id)
+    
+        // const cacheKey = `sprint_project:${id}`;
+        //     const cacheData = await redisClient.get(cacheKey);
+        
+        //     if(cacheData){
+        //       const sprints = JSON.parse(cacheData)
+        //       console.log(sprints);
+        //       return res.status(200).json(sprints)
+        //         }
+    
+    
+         const sprints = await sprintModudles.getSprintsByProjectNameAndSprintName(id,name);
+         console.log("Sptints: " + sprints)
+        //  await redisClient.set(`sprint_project:${id}`, JSON.stringify(sprints));
+         console.log(sprints)
+         return res.status(200).json(sprints);
+    },
+
+    async getSprintByProjectNameAndSprintName(req, res) {
         console.log(req.params)
         const id = req.params.id;
         console.log("id: " + id)

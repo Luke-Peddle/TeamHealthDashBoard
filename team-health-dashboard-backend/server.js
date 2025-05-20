@@ -4,6 +4,8 @@ const clearCacheRoute = require('./routes/clearCache');
 const projectRoutes = require('./routes/project');
 const sprintRoutes = require('./routes/sprint');
 const storyCardRoutes = require('./routes/storyCard');
+const velocityRoutes = require('./routes/velocity');
+
 
 
 const cors = require('cors');
@@ -20,6 +22,7 @@ app.use('/api/cache', clearCacheRoute);
 app.use('/api/project', projectRoutes);
 app.use('/api/sprint', sprintRoutes);
 app.use('/api/storyCard', storyCardRoutes);
+app.use('/api/velocity', velocityRoutes);
 
 
 app.get('/', (req, res) => {
