@@ -2,7 +2,6 @@ import React from 'react'
 import axios from 'axios';
 import ProjectList from './manager/projects/projectList';
 
-
 const user = {
   "user_id": 5,
   "username": "Luke Peddle",
@@ -26,19 +25,19 @@ export async function getServerSideProps() {
   }
 }
 
-const index  = ({projects}) => {
-  
-
-
+const index = ({projects}) => {
   return (
-    <div>index
+    <div className="p-4">
+      <h1 className="text-xl font-semibold text-gray-800 mb-4">Dashboard</h1>
+      
       {user.role === "manager" ? (
         <div>
-          <ProjectList projects = {projects} user_id ={user.user_id} />
+          <ProjectList projects={projects} user_id={user.user_id} />
         </div>
-      ): (
-        <div>contributor</div>
-
+      ) : (
+        <div>
+          <p className="text-gray-600">Contributor dashboard</p>
+        </div>
       )}
     </div>
   )

@@ -32,7 +32,7 @@ const SidePanel = ({
           <SheetTitle>Sprint & Team Management</SheetTitle>
         </SheetHeader>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="">
                     <div>
                         <h2 className="text-2xl font-semibold text-gray-800 mb-4">Sprints</h2>
                         <div className="space-y-4">
@@ -45,13 +45,17 @@ const SidePanel = ({
                                     <p className="text-gray-600 text-center">No sprints yet</p>
                                 </div>
                             )}
-                            <AddSprint />
+                           
                         </div>
+                        
                     </div>
+                     
 
                    
                     
                 </div>
+                 <Separator />
+                <AddSprint />
         
         
           
