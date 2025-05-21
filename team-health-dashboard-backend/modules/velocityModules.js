@@ -17,6 +17,21 @@ const velocityModules ={
                         console.log(error)
                         throw error;
                       }
+    },
+    async getVelocityBySprintId (sprint_id){
+        try{
+            const results = await db.query(
+                        'Select * FROM velocity_metrics WHERE sprint_id = $1 ',
+                        [sprint_id]
+                        )
+            
+                        console.log(results)
+                        return results.rows[0];
+        }
+        catch (error){
+            console.log(error)
+            throw error;
+        }
     }
     }
 

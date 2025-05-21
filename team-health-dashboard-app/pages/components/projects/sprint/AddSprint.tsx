@@ -5,6 +5,7 @@ import { CalendarIcon } from "lucide-react"
 import { useRouter } from 'next/router';
 
 const AddSprint = () => {
+    const [name, setName] = useState('')
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [message, setMessage] = useState({ text: '', type: '' });
@@ -20,7 +21,8 @@ const AddSprint = () => {
         const newSprint = {
             start_date: startDate,
             end_date: endDate,
-            project_id: id
+            project_id: id,
+            name: name
         }
 
         setMessage({ text: 'Creating sprint...', type: 'info' });
@@ -32,6 +34,7 @@ const AddSprint = () => {
             
             setStartDate('');
             setEndDate('');
+            setName('');
         })
         .catch(error => {
             console.error('There was an error creating the sprint!', error);
@@ -78,6 +81,18 @@ const AddSprint = () => {
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div >
+                    <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                         Name
+                    </label>
+                    <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                </div>
                     <div className="space-y-2">
                         <label htmlFor="start-date" className="text-sm font-medium text-gray-700 flex items-center">
                             <CalendarIcon className="h-4 w-4 mr-1 text-gray-500" />

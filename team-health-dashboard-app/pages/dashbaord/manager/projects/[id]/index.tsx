@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import SidePanel from '@/pages/components/projects/SidePannel/SidePAnnel';
 import EditProject from '@/pages/components/projects/EditProject';
+import VelocityUploader from '@/pages/components/Uploader/velocityUploader';
 import { Button } from '@/components/ui/button';
 import { Menu, ChevronRight } from 'lucide-react';
 
@@ -47,6 +48,9 @@ const Index = ({ project, sprints, teamMembers, nonTeamMembers }) => {
                     </div>
                 )}
                 </main>
+                <div>
+                  <VelocityUploader />
+                </div>
 
                 <Button
         onClick={() => setIsPanelOpen(!isPanelOpen)}

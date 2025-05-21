@@ -7,6 +7,13 @@ const volocityController ={
         const { project_id, name,story_points } = req.body;
 
        const sprintResponse = await sprintModudles.getSprintsByProjectIDeAndSprintName(project_id,name);
+
+       const VelocityExisted = await velocityModules.getVelocityBySprintId(sprintResponse[0].id);
+
+       if(VelocityExisted != null){
+        console.log("Enter");
+        return
+       }
        console.log("sprint: " +  JSON.stringify(sprintResponse[0].id));
        const newVolocityRecord = await velocityModules.createVolocityRecord(sprintResponse[0].id,story_points);
        res.status(201).json(newVolocityRecord);
