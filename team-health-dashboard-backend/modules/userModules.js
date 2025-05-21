@@ -53,6 +53,24 @@ const userModel ={
           }
     },
 
+    async getUserByEmail(email){
+        try{
+            const results = await db.query(
+               'SELECT * FROM users WHERE email = $1',
+                [email]
+                
+            )
+    
+            console.log(results)
+            return results.rows[0];
+    
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+          }
+    },
+
     async updateUser(id, username, firstName,lastName, email, role){
         try{
            
@@ -164,6 +182,23 @@ const userModel ={
             const results = await db.query(
                'DELETE FROM project_members WHERE project_id = $1',
                 [project_id]
+            )
+    
+            console.log(results)
+            return results.rows;
+    
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+          }
+    },
+
+    async checkIfUserInTeam(user_id, project_id){
+        try{
+            const results = await db.query(
+               'SELECT * FROM project_members WHERE user_id = $1 AND  project_id = $2',
+                [user_id, project_id]
             )
     
             console.log(results)
