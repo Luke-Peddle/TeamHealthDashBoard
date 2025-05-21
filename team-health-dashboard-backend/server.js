@@ -5,7 +5,8 @@ const projectRoutes = require('./routes/project');
 const sprintRoutes = require('./routes/sprint');
 const storyCardRoutes = require('./routes/storyCard');
 const velocityRoutes = require('./routes/velocity');
-const oncallRoutes = require('./routes/oncall')
+const oncallRoutes = require('./routes/oncall');
+const codeReviewRoutes = require('./routes/coderReview')
 
 
 
@@ -25,6 +26,7 @@ app.use('/api/sprint', sprintRoutes);
 app.use('/api/storyCard', storyCardRoutes);
 app.use('/api/velocity', velocityRoutes);
 app.use('/api/oncall', oncallRoutes);
+app.use('/api/codeReview', codeReviewRoutes);
 
 
 
