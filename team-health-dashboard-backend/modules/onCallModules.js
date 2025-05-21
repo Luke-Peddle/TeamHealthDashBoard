@@ -34,6 +34,24 @@ const onCallModule ={
                 console.log(error)
                 throw error;
             }
+        },
+
+         async deleteOnCallBuSprintId(id){
+            try{
+                
+                const results = await db.query(
+                    'DELETE * FROM oncall_metrics WHERE sprint_id = $1',
+                    [id]
+                )
+        
+                console.log(results)
+                return results.rows;
+        
+            }
+            catch (error) {
+                console.log(error)
+                throw error;
+                }
         }
 }
 

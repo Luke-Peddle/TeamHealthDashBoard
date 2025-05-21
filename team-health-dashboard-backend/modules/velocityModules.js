@@ -32,7 +32,25 @@ const velocityModules ={
             console.log(error)
             throw error;
         }
-    }
+    },
+
+     async deleteVelocityBuSprintId(id){
+            try{
+                
+                const results = await db.query(
+                    'DELETE * FROM velocity_metrics WHERE sprint_id = $1',
+                    [id]
+                )
+        
+                console.log(results)
+                return results.rows;
+        
+            }
+            catch (error) {
+                console.log(error)
+                throw error;
+                }
+        }
     }
 
 

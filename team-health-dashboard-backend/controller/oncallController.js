@@ -6,7 +6,10 @@ const redisClient = require('../utils/redis');
 const onCallController ={
     async createOncallRecord(req,res){
         const { user_email,project_id,sprint_name,incidents_count,week_starting_date } = req.body;
-        console.log('Enter oncall backend')
+        
+        if(incidents_count < 0){
+            return res.status(500).end();
+        }
         console.log(user_email)
        const user = await userModeles.getUserByEmail(user_email);
        if(!user){
