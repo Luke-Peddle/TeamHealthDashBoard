@@ -28,22 +28,26 @@ const CodeReviewController ={
 
        const sprintResponse = await sprintModules.getSprintsByProjectIDeAndSprintName(project_id,sprint_name);
 
-       console.log(sprintResponse);
+      
         if(!sprintResponse){
             console.log("enter");
 
             return res.status(200).end();
        }
+        console.log("Sprint Response: " + sprintResponse);
 
-       const oncallExist = await codeReviewModule.getCodeReviewBySprintId(sprintResponse[0].id);
+       const oncallExist = await codeReviewModule.getCodeReviewBySprintIdAndUserID(sprintResponse[0].id,user.user_id);
 
        console.log(oncallExist)
-       if(oncallExist != null){
-        console.log("User already have call back for this week")
+       if(oncallExist){
+        console.log("User already have record for code revire for this sprint")
             return res.status(200).end(); 
        }
 
        const newOncallRecord = await codeReviewModule.createCodeReviewRecord(user.user_id,project_id, sprintResponse[0].id, prs_reviewed,avg_review_time_hours);
+       
+       console.log("code Review Record: " + newOncallRecord)
+
        res.status(201).json(newOncallRecord);
     }
 }

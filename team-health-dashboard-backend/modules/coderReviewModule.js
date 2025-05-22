@@ -19,11 +19,11 @@ const codeReviewModule ={
                         throw error;
                       }
     },
-    async getCodeReviewBySprintId (sprint_id){
+    async getCodeReviewBySprintIdAndUserID (sprint_id, user_id){
         try{
             const results = await db.query(
-                        'Select * FROM codereview_metrics WHERE sprint_id = $1 ',
-                        [sprint_id]
+                        'Select * FROM codereview_metrics WHERE sprint_id = $1 AND user_id = $2',
+                        [sprint_id,user_id]
                         )
             
                         console.log(results)
