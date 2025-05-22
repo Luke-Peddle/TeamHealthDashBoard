@@ -3,6 +3,8 @@ import axios from 'axios';
 import SidePanel from '@/pages/components/projects/SidePannel/SidePAnnel';
 import EditProject from '@/pages/components/projects/EditProject';
 import VelocityUploader from '@/pages/components/Uploader/velocityUploader';
+import CodeReviewUploader from '@/pages/components/CodeReview/CodeReviewUploader';
+import Oncall from '@/pages/components/Oncall/Oncall';
 import { Button } from '@/components/ui/button';
 import { Menu, ChevronRight } from 'lucide-react';
 
@@ -40,7 +42,6 @@ const Index = ({ project, sprints, teamMembers, nonTeamMembers }) => {
                 {project ? (
                     <div className="bg-white rounded-lg shadow-md p-6 mb-8">
                         <h1 className="text-3xl font-bold text-gray-800 mb-2">{project.name}</h1>
-                        <p className="text-gray-600">Project ID: {project.id}</p>
                     </div>
                 ) : (
                     <div className="bg-white rounded-lg shadow-md p-6 mb-8">
@@ -48,8 +49,10 @@ const Index = ({ project, sprints, teamMembers, nonTeamMembers }) => {
                     </div>
                 )}
                 </main>
-                <div>
+                <div className="fixed bottom-4 left-4 flex gap-4 z-40">
                   <VelocityUploader />
+                  <Oncall />
+                  <CodeReviewUploader />
                 </div>
 
                 <Button

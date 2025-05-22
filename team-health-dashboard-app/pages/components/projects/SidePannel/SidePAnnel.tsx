@@ -38,7 +38,7 @@ const SidePanel = ({
                         <div className="space-y-4">
                             {sprints && sprints.length > 0 ? (
                                 sprints.map(sprint => (
-                                    <Sprint key={sprint.id} sprint={sprint} />
+                                    <Sprint key={sprint.id} sprint={sprint} project_id = {project.id} />
                                 ))
                             ) : (
                                 <div className="bg-white rounded-lg shadow-md p-6">
