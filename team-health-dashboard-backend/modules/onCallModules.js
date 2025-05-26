@@ -40,7 +40,7 @@ const onCallModule ={
             try{
                 
                 const results = await db.query(
-                    'DELETE * FROM oncall_metrics WHERE sprint_id = $1',
+                    'DELETE  FROM oncall_metrics WHERE sprint_id = $1',
                     [id]
                 )
         

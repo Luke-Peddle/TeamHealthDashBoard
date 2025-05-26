@@ -1,38 +1,56 @@
 import React, {useState} from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import Select from 'react-select';
 import { useRouter } from 'next/router';
 
 const AddMember = ({members}) => {
     const router = useRouter();
+    const queryClient = useQueryClient();
     const [teamMember, setTeamMember] = useState({});
     const [message, setMessage] = useState({ text: '', type: '' });
-    const [isLoading, setIsLoading] = useState(false);
+    const { id } = router.query;
 
     const selectOptions = members.map((member) => {
         return {value: member.user_id, label: member.username}
     });
 
-    const AddingTeamMember = async () => {
-        if (!teamMember.value) return;
-        
-        setIsLoading(true);
-        const { id } = router.query;
-
-        try {
-            const response = await axios.post(`http://localhost:4000/api/project/addMember/${id}/${teamMember.value}`);
-            console.log('User added', response.data);
+    const addMemberMutation = useMutation({
+        mutationFn: async (memberId) => {
+            const response = await axios.post(`http://localhost:4000/api/project/addMember/${id}/${memberId}`);
+            return response.data;
+        },
+        onSuccess: (data) => {
+            console.log('User added', data);
             setMessage({ text: 'User added successfully!', type: 'success' });
             setTeamMember('');
-        } catch (error) {
+            
+            queryClient.invalidateQueries({ queryKey: ['teamMembers', id] });
+            queryClient.invalidateQueries({ queryKey: ['nonTeamMembers', id] });
+            queryClient.invalidateQueries({ queryKey: ['teamMembers', String(id)] });
+            queryClient.invalidateQueries({ queryKey: ['nonTeamMembers', String(id)] });
+            
+            setTimeout(() => {
+                setMessage({ text: '', type: '' });
+            }, 3000);
+        },
+        onError: (error) => {
             console.error('There was an error adding the user!', error);
             setMessage({ text: 'Error adding the user', type: 'error' });
-        } finally {
-            setIsLoading(false);
+            
+            setTimeout(() => {
+                setMessage({ text: '', type: '' });
+            }, 5000);
         }
+    });
+
+    const AddingTeamMember = async () => {
+        if (!teamMember.value) return;
+        addMemberMutation.mutate(teamMember.value);
     }
+
+    const isLoading = addMemberMutation.isPending;
     
-    // Custom styles for React-Select
     const customStyles = {
         control: (provided) => ({
             ...provided,

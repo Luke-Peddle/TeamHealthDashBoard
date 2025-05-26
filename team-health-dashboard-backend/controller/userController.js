@@ -8,11 +8,6 @@ const redisClient = require('../utils/redis')
 const userController = {
     
     
-
-    async removeKey(id){
-        await redisClient.del(`user: ${id}`)
-    },
-
 async createUser(req, res) {
 
     const { username, password, firstName,lastName,email, role } = req.body;

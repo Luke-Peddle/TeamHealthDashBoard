@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import ProjectDetails from './projectDetails'
 import { useRouter } from 'next/router';
 import axios from 'axios';
@@ -6,41 +7,55 @@ import { PlusCircle } from 'lucide-react';
 
 const ProjectList = ({projects, user_id}) => {
     const router = useRouter();
+    const queryClient = useQueryClient();
     const [name, setName] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState({ text: '', type: '' });
     const [isFormOpen, setIsFormOpen] = useState(false);
+
+    const createProjectMutation = useMutation({
+        mutationFn: async (newProject) => {
+            const response = await axios.post("http://localhost:4000/api/project", newProject);
+            return response.data;
+        },
+        onMutate: () => {
+            setMessage({ text: 'Creating project...', type: 'info' });
+        },
+        onSuccess: (data) => {
+            console.log('Project created successfully:', data);
+            setMessage({ text: 'Project created successfully!', type: 'success' });
+            setName('');
+            
+            queryClient.invalidateQueries({ queryKey: ['projects', user_id] });
+            queryClient.invalidateQueries({ queryKey: ['projects', String(user_id)] });
+            
+            setTimeout(() => {
+                setMessage({ text: '', type: '' });
+                setIsFormOpen(false);
+            }, 2000);
+        },
+        onError: (error) => {
+            console.error('There was an error creating the project!', error);
+            setMessage({ text: 'Error creating project', type: 'error' });
+            
+            setTimeout(() => {
+                setMessage({ text: '', type: '' });
+            }, 5000);
+        }
+    });
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!name.trim()) return;
-        
-        setIsSubmitting(true);
-        setMessage({ text: 'Creating project...', type: 'info' });
         
         const newProject = {
             name: name,
             manager: user_id,
         }
 
-        axios.post("http://localhost:4000/api/project", newProject) 
-        .then(response => {
-            console.log('Project created successfully:', response.data);
-            setMessage({ text: 'Project created successfully!', type: 'success' });
-            setName('');
-            
-            setTimeout(() => {
-                router.reload();
-            }, 1000);
-        })
-        .catch(error => {
-            console.error('There was an error creating the project!', error);
-            setMessage({ text: 'Error creating project', type: 'error' });
-        })
-        .finally(() => {
-            setIsSubmitting(false);
-        });
+        createProjectMutation.mutate(newProject);
     }
+
+    const isSubmitting = createProjectMutation.isPending;
     
     return (
         <div>
@@ -82,8 +97,9 @@ const ProjectList = ({projects, user_id}) => {
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 required
+                                disabled={isSubmitting}
                                 placeholder="Enter project name"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
                             />
                         </div>
                         <div>

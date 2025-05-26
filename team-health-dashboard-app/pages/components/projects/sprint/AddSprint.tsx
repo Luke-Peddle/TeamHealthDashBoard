@@ -1,55 +1,68 @@
-import React, {useState} from 'react';
-import { Input } from "@/components/ui/input"
-import axios from 'axios';
-import { CalendarIcon } from "lucide-react"
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 
-const AddSprint = () => {
-    const [name, setName] = useState('')
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
-    const [message, setMessage] = useState({ text: '', type: '' });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    
+const EditProject = (props) => {
     const router = useRouter();
+    const queryClient = useQueryClient();
+    const [name, setName] = useState('');
+    const [message, setMessage] = useState({ text: '', type: '' });
+    const { id } = router.query;
+    
+    // Set initial value from props
+    useEffect(() => {
+        if (props.project && props.project.name) {
+            setName(props.project.name);
+        }
+    }, [props.project]);
+
+    // Update project mutation
+    const updateProjectMutation = useMutation({
+        mutationFn: async (updatedProject) => {
+            const response = await axios.patch(`http://localhost:4000/api/project/${id}`, updatedProject);
+            return response.data;
+        },
+        onMutate: () => {
+            setMessage({ text: 'Updating project...', type: 'info' });
+        },
+        onSuccess: (data) => {
+            console.log('Project updated', data);
+            setMessage({ text: 'Project updated successfully!', type: 'success' });
+            
+            queryClient.invalidateQueries({ queryKey: ['project', id] });
+            
+            queryClient.invalidateQueries({ queryKey: ['projects'] });
+            
+            setTimeout(() => {
+                setMessage({ text: '', type: '' });
+            }, 3000);
+        },
+        onError: (error) => {
+            console.error('There was an error updating the project!', error);
+            setMessage({ text: 'Error updating the project', type: 'error' });
+            
+            setTimeout(() => {
+                setMessage({ text: '', type: '' });
+            }, 5000);
+        }
+    });
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setIsSubmitting(true);
-        const { id } = router.query;
+        if (!name.trim()) return;
         
-        const newSprint = {
-            start_date: startDate,
-            end_date: endDate,
-            project_id: id,
-            name: name
-        }
+        const updatedProject = {...props.project, name: name};
 
-        setMessage({ text: 'Creating sprint...', type: 'info' });
-
-        axios.post("http://localhost:4000/api/sprint", newSprint) 
-        .then(response => {
-            console.log('sprint created successfully:', response.data);
-            setMessage({ text: 'Sprint created successfully!', type: 'success' });
-            
-            setStartDate('');
-            setEndDate('');
-            setName('');
-        })
-        .catch(error => {
-            console.error('There was an error creating the sprint!', error);
-            setMessage({ text: 'Error creating sprint', type: 'error' });
-        })
-        .finally(() => {
-            setIsSubmitting(false);
-        });
+        updateProjectMutation.mutate(updatedProject);
     }
 
+    const isSubmitting = updateProjectMutation.isPending;
+
     return (
-        <div className="bg-white rounded-lg shadow-md p-6 mt-6 border border-gray-100">
+        <div>
             <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
-                
-                Add a Sprint
+                Edit Project
             </h3>
             
             {message.text && (
@@ -80,59 +93,29 @@ const AddSprint = () => {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-                <div >
-                    <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                         Name
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
+                        </svg>
+                        Project Name
                     </label>
                     <input
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        disabled={isSubmitting}
+                        placeholder="Enter project name"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
                     />
-                </div>
-                    <div className="space-y-2">
-                        <label htmlFor="start-date" className="text-sm font-medium text-gray-700 flex items-center">
-                            <CalendarIcon className="h-4 w-4 mr-1 text-gray-500" />
-                            Start Date
-                        </label>
-                        <div className="relative">
-                            <Input
-                                id="start-date"
-                                type="date"
-                                value={startDate}
-                                onChange={(e) => setStartDate(e.target.value)}
-                                required
-                                className="w-full"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="space-y-2">
-                        <label htmlFor="end-date" className="text-sm font-medium text-gray-700 flex items-center">
-                            <CalendarIcon className="h-4 w-4 mr-1 text-gray-500" />
-                            End Date
-                        </label>
-                        <div className="relative">
-                            <Input
-                                id="end-date"
-                                type="date"
-                                value={endDate}
-                                onChange={(e) => setEndDate(e.target.value)}
-                                required
-                                className="w-full"
-                            />
-                        </div>
-                    </div>
                 </div>
 
                 <div className="pt-2">
                     <button 
-                        type="submit" 
-                        disabled={isSubmitting}
-                        className={`w-full ${isSubmitting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'} text-white font-medium py-2 px-4 rounded-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex justify-center items-center`}
+                        type="submit"
+                        disabled={isSubmitting || !name.trim()}
+                        className={`w-full ${isSubmitting || !name.trim() ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'} text-white font-medium py-2 px-4 rounded-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex justify-center items-center`}
                     >
                         {isSubmitting ? (
                             <>
@@ -140,9 +123,9 @@ const AddSprint = () => {
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
-                                Creating...
+                                Updating...
                             </>
-                        ) : "Add Sprint"}
+                        ) : "Update Project Name"}
                     </button>
                 </div>
             </form>
@@ -150,4 +133,4 @@ const AddSprint = () => {
     )
 }
 
-export default AddSprint
+export default EditProject

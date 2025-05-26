@@ -38,7 +38,7 @@ const velocityModules ={
             try{
                 
                 const results = await db.query(
-                    'DELETE * FROM velocity_metrics WHERE sprint_id = $1',
+                    'DELETE  FROM velocity_metrics WHERE sprint_id = $1',
                     [id]
                 )
         

@@ -39,7 +39,7 @@ const codeReviewModule ={
             try{
                 
                 const results = await db.query(
-                    'DELETE * FROM codereview_metrics WHERE sprint_id = $1',
+                    'DELETE  FROM codereview_metrics WHERE sprint_id = $1',
                     [id]
                 )
         
