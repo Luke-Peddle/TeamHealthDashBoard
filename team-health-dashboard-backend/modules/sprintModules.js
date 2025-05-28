@@ -42,7 +42,7 @@ const sprintModules = {
     async getSprintsByProjectId(project_id){
         try{
                 const results = await db.query(
-                            'SELECT * FROM sprints WHERE project_id = $1',
+                            'SELECT * FROM sprints WHERE project_id = $1 ORDER BY start_date ASC',
                             [project_id]  
                         )
 

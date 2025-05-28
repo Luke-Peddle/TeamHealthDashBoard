@@ -45,7 +45,27 @@ const onCallController ={
 
        const newOncallRecord = await onCallModule.createOnCallRecord(user.user_id,project_id, sprintResponse[0].id,incidents_count,week_starting_date);
        res.status(201).json(newOncallRecord);
-    }
+    },
+    async getOnCallByProjectId(req, res) {
+        console.log(req.params)
+        const id = req.params.id;
+        console.log("id: " + id)
+    
+        // const cacheKey = `projects_manager:${id}`;
+        // const cacheData = await redisClient.get(cacheKey);
+        
+        // if(cacheData){
+        //     const projects = JSON.parse(cacheData)
+        //     console.log(projects);
+        //     return res.status(201).json(projects)
+        //         }
+
+    
+         const onCalls = await onCallModule.getOnCallByProjectId(id);
+        //  await redisClient.set(`projects_manager:${id}`, JSON.stringify(projects));
+         console.log(onCalls)
+         return res.status(201).json(onCalls);
+    },
 }
 
 module.exports = onCallController;

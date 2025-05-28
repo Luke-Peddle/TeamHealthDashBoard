@@ -35,6 +35,22 @@ const codeReviewModule ={
         }
     },
 
+    async getCodeReviewByProjectId (project_id){
+            try{
+                const results = await db.query(
+                            'Select * FROM codereview_metrics WHERE project_id = $1 ',
+                            [project_id]
+                            )
+                
+                            console.log(results)
+                            return results.rows;
+            }
+            catch (error){
+                console.log(error)
+                throw error;
+            }
+        },
+
      async deleteCodeReviewBuSprintId(id){
             try{
                 

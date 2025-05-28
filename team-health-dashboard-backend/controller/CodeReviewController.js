@@ -49,7 +49,27 @@ const CodeReviewController ={
        console.log("code Review Record: " + newOncallRecord)
 
        res.status(201).json(newOncallRecord);
-    }
+    },
+     async getCodeReviewByProjectId(req, res) {
+        console.log(req.params)
+        const id = req.params.id;
+        console.log("id: " + id)
+    
+        // const cacheKey = `projects_manager:${id}`;
+        // const cacheData = await redisClient.get(cacheKey);
+        
+        // if(cacheData){
+        //     const projects = JSON.parse(cacheData)
+        //     console.log(projects);
+        //     return res.status(201).json(projects)
+        //         }
+
+    
+         const codeReviews = await codeReviewModule.getCodeReviewByProjectId(id);
+        //  await redisClient.set(`projects_manager:${id}`, JSON.stringify(projects));
+         console.log(codeReviews)
+         return res.status(201).json(codeReviews);
+    },
 }
 
 module.exports = CodeReviewController;

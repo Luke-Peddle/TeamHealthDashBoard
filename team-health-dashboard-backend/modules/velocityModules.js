@@ -1,11 +1,11 @@
 const db = require('../utils/db')
 
 const velocityModules ={
-    async createVolocityRecord(sprint_id,storyPoints){
+    async createVolocityRecord(sprint_id,project_id, storyPoints){
             try{
                         const results = await db.query(
-                        'INSERT INTO velocity_metrics(sprint_id, story_points_completed) VALUES ($1,$2)',
-                        [sprint_id, storyPoints]
+                        'INSERT INTO velocity_metrics(sprint_id, project_id,  story_points_completed) VALUES ($1,$2,$3)',
+                        [sprint_id, project_id, storyPoints]
                         )
             
                         console.log(results)
@@ -27,6 +27,22 @@ const velocityModules ={
             
                         console.log(results)
                         return results.rows[0];
+        }
+        catch (error){
+            console.log(error)
+            throw error;
+        }
+    },
+
+    async getVelocityByProjectId (project_id){
+        try{
+            const results = await db.query(
+                        'Select * FROM velocity_metrics WHERE project_id = $1 ',
+                        [project_id]
+                        )
+            
+                        console.log(results)
+                        return results.rows;
         }
         catch (error){
             console.log(error)

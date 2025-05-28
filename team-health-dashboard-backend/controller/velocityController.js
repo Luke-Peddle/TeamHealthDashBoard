@@ -14,14 +14,34 @@ const volocityController ={
 
        const VelocityExisted = await velocityModules.getVelocityBySprintId(sprintResponse[0].id);
 
-       if(VelocityExisted != null){
+       if(VelocityExisted ){
         console.log("Enter");
         return
        }
        console.log("sprint: " +  JSON.stringify(sprintResponse[0].id));
-       const newVolocityRecord = await velocityModules.createVolocityRecord(sprintResponse[0].id,story_points);
+       const newVolocityRecord = await velocityModules.createVolocityRecord(sprintResponse[0].id, project_id, story_points);
        res.status(201).json(newVolocityRecord);
-    }
+    },
+    async getVelocityByProjectId(req, res) {
+        console.log(req.params)
+        const id = req.params.id;
+        console.log("id: " + id)
+    
+        // const cacheKey = `projects_manager:${id}`;
+        // const cacheData = await redisClient.get(cacheKey);
+        
+        // if(cacheData){
+        //     const projects = JSON.parse(cacheData)
+        //     console.log(projects);
+        //     return res.status(201).json(projects)
+        //         }
+
+    
+         const velocity = await velocityModules.getVelocityByProjectId(id);
+        //  await redisClient.set(`projects_manager:${id}`, JSON.stringify(projects));
+         console.log(velocity)
+         return res.status(201).json(velocity);
+    },
 }
 
 module.exports = volocityController;
