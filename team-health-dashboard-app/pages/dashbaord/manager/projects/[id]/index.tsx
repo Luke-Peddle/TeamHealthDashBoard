@@ -8,8 +8,8 @@ import CodeReviewUploader from '@/pages/components/CodeReview/CodeReviewUploader
 import Oncall from '@/pages/components/Oncall/Oncall';
 import { Button } from '@/components/ui/button';
 import { Menu, ChevronRight } from 'lucide-react';
+import Metrics from '@/pages/components/projects/KPICards/Metrics';
 
-// API functions for TanStack Query
 const fetchProject = async (id) => {
     const response = await axios.get(`http://localhost:4000/api/project/${id}`);
     return response.data;
@@ -30,6 +30,21 @@ const fetchNonTeamMembers = async (id) => {
     return response.data;
 };
 
+const fetchVelocity = async (id) => {
+    const response = await axios.get(`http://localhost:4000/api/velocity/${id}`);
+    return response.data;
+};
+
+const fetchOnCall = async (id) => {
+    const response = await axios.get(`http://localhost:4000/api/oncall/${id}`);
+    return response.data;
+};
+
+const fetchCodeReview = async (id) => {
+    const response = await axios.get(`http://localhost:4000/api/codeReview/${id}`);
+    return response.data;
+};
+
 export async function getServerSideProps(context) {
     const { id } = context.params;
     console.log(id);
@@ -39,11 +54,18 @@ export async function getServerSideProps(context) {
         const sprintResponse = await axios.get(`http://localhost:4000/api/sprint/project/${id}`);
         const teamMembersResponse = await axios.get(`http://localhost:4000/api/users/teamMembers/${id}`);
         const nonTeamMembersResponse = await axios.get(`http://localhost:4000/api/users/nonTeamMembers/${id}`);
+        const velocityMetricResponse = await axios.get(`http://localhost:4000/api/velocity/${id}`);
+        const onCallMetricsResponse = await axios.get(`http://localhost:4000/api/oncall/${id}`);
+        const codeReviewMetricResponse = await axios.get(`http://localhost:4000/api/codeReview/${id}`)
+        
 
         const project = projectResponse.data;
         const sprints = sprintResponse.data;
         const teamMembers = teamMembersResponse.data;
         const nonTeamMembers = nonTeamMembersResponse.data;
+        const velocityMetric = velocityMetricResponse.data;
+        const onCallMatrics = onCallMetricsResponse.data;
+        const codeReviewMatrics = codeReviewMetricResponse.data;
         
         console.log("Project: " + project);
         
@@ -53,7 +75,10 @@ export async function getServerSideProps(context) {
                 sprints, 
                 teamMembers, 
                 nonTeamMembers,
-                projectId: id 
+                projectId: id,
+                velocityMetric,
+                onCallMatrics,
+                codeReviewMatrics
             } 
         };
     } catch (error) {
@@ -64,13 +89,16 @@ export async function getServerSideProps(context) {
                 sprints: [], 
                 teamMembers: [], 
                 nonTeamMembers: [],
-                projectId: id
+                projectId: id,
+                velocityMetric: [],
+                onCallMatrics: [],
+                codeReviewMatrics: []
             } 
         };
     }
 }
 
-const Index = ({ project: initialProject, sprints: initialSprints, teamMembers: initialTeamMembers, nonTeamMembers: initialNonTeamMembers, projectId }) => {
+const Index = ({ project: initialProject, sprints: initialSprints, teamMembers: initialTeamMembers, nonTeamMembers: initialNonTeamMembers, projectId, velocityMetric: initialVelocityMetric, onCallMatrics: initialOnCallMetric, codeReview: initalCodeReview }) => {
     const [isPanelOpen, setIsPanelOpen] = useState(false);
 
     const { data: project, isLoading: projectLoading } = useQuery({
@@ -101,6 +129,29 @@ const Index = ({ project: initialProject, sprints: initialSprints, teamMembers: 
         staleTime: 5 * 60 * 1000, 
     });
 
+    const { data: velocityMetric } = useQuery({
+        queryKey: ['velocityMetric', projectId],
+        queryFn: () => fetchVelocity(projectId),
+        initialData: initialVelocityMetric,
+        staleTime: 5 * 60 * 1000, 
+    });
+
+     const { data: onCallMatrics } = useQuery({
+        queryKey: ['onCallMatrics', projectId],
+        queryFn: () => fetchOnCall(projectId),
+        initialData: initialOnCallMetric,
+        staleTime: 5 * 60 * 1000, 
+    });
+    const { data: codeReviewMatrics } = useQuery({
+        queryKey: ['codeReviewMatrics', projectId],
+        queryFn: () => fetchCodeReview(projectId),
+        initialData: initalCodeReview,
+        staleTime: 5 * 60 * 1000, 
+    })
+
+    
+
+   
     return (
         <div className="min-h-screen bg-gray-50 py-8">
             <main className={`transition-all duration-300 ${isPanelOpen ? 'mr-80' : 'mr-0'}`}>
@@ -133,6 +184,8 @@ const Index = ({ project: initialProject, sprints: initialSprints, teamMembers: 
                                 <span className="font-medium">Team Members:</span> {teamMembers?.length || 0}
                             </p>
                         </div>
+
+                        
 {/* 
                         <div className="mt-8">
                             <h2 className="text-xl font-semibold text-gray-800 mb-4">Team Health Dashboard</h2>
@@ -166,8 +219,20 @@ const Index = ({ project: initialProject, sprints: initialSprints, teamMembers: 
                     </div>
                 )}
             </main>
+
             
-            <div className="fixed bottom-4 left-4 flex gap-4 z-40">
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+                <div className="bg-white rounded-lg shadow-md border border-gray-200 p-8 w-full max-w-6xl">
+                    <Metrics 
+                        velocityMetric={velocityMetric} 
+                        onCallMetrics={onCallMatrics} 
+                        codeReviewMetrics={codeReviewMatrics} 
+                        sprint_id={sprints[0].id} 
+                    />
+                </div>
+            </div>
+            
+            <div className=" left-4 flex gap-4 z-40">
                 <VelocityUploader />
                 <Oncall />
                 <CodeReviewUploader />

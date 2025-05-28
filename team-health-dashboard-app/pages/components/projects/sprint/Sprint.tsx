@@ -51,31 +51,32 @@ const Sprint = (props) => {
   const isDeleting = deleteSprintMutation.isPending;
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-200 relative">
+    <div className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm transition-shadow duration-200 relative">
       <div className="flex items-start justify-between">
         <a 
           href={`http://localhost:3000/dashbaord/manager/sprint/${props.sprint?.id}`}
-          className="text-lg font-semibold text-gray-800 hover:text-blue-600 transition-colors flex-1"
+          className="flex-1 group"
         >
-          {props.sprint.name}
-          <br/>
-          <span className="text-sm text-gray-600 font-normal">
+          <h3 className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors mb-1">
+            {props.sprint.name}
+          </h3>
+          <p className="text-xs text-gray-600">
             {startDate.toLocaleDateString('en-US', {
               year: 'numeric',
-              month: 'long',
+              month: 'short',
               day: 'numeric'
             })} - {endDate.toLocaleDateString('en-US', {
               year: 'numeric',
-              month: 'long',
+              month: 'short',
               day: 'numeric'
             })}
-          </span>
+          </p>
         </a>
 
         <button 
           onClick={handleDeleteClick}
           disabled={isDeleting}
-          className="ml-2 p-1 text-gray-400 hover:text-red-600 transition-colors disabled:opacity-50"
+          className="ml-3 p-1 text-gray-400 hover:text-red-600 transition-colors disabled:opacity-50 rounded hover:bg-red-50"
           title="Delete sprint"
         >
           {isDeleting ? (
@@ -87,9 +88,9 @@ const Sprint = (props) => {
       </div>
 
       {showConfirm && (
-        <div className="absolute inset-0 bg-white bg-opacity-95 rounded-lg flex items-center justify-center border-2 border-red-200">
-          <div className="text-center p-4">
-            <p className="text-sm text-gray-700 mb-3">
+        <div className="absolute inset-0 bg-white bg-opacity-95 rounded-lg flex items-center justify-center border-2 border-red-200 backdrop-blur-sm">
+          <div className="text-center p-3">
+            <p className="text-xs text-gray-700 mb-3">
               Delete "{props.sprint.name}"?
             </p>
             <div className="flex gap-2 justify-center">
@@ -98,13 +99,13 @@ const Sprint = (props) => {
                 disabled={isDeleting}
                 className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 disabled:opacity-50 flex items-center gap-1"
               >
-                {isDeleting && <Loader2 size={12} className="animate-spin" />}
+                {isDeleting && <Loader2 size={10} className="animate-spin" />}
                 Delete
               </button>
               <button
                 onClick={handleCancelDelete}
                 disabled={isDeleting}
-                className="px-3 py-1 bg-gray-300 text-gray-700 text-xs rounded hover:bg-gray-400 disabled:opacity-50"
+                className="px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded hover:bg-gray-300 disabled:opacity-50"
               >
                 Cancel
               </button>

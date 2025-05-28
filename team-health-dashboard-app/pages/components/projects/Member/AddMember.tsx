@@ -55,22 +55,25 @@ const AddMember = ({members}) => {
         control: (provided) => ({
             ...provided,
             borderRadius: '0.375rem',
-            borderColor: '#e2e8f0',
+            borderColor: '#d1d5db',
             boxShadow: 'none',
+            fontSize: '14px',
+            minHeight: '38px',
             '&:hover': {
-                borderColor: '#cbd5e0',
+                borderColor: '#9ca3af',
             },
         }),
         option: (provided, state) => ({
             ...provided,
             backgroundColor: state.isSelected ? '#3b82f6' : state.isFocused ? '#eff6ff' : null,
             color: state.isSelected ? 'white' : '#1f2937',
+            fontSize: '14px',
         }),
     };
     
     return (
-        <div >
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+        <div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
                 Add Team Member
             </h3>
 
@@ -81,25 +84,38 @@ const AddMember = ({members}) => {
                         setTeamMember(selectedOption);
                     }}
                     value={teamMember}
-                    placeholder="Select a user to add to the team..."
+                    placeholder="Select a user to add..."
                     styles={customStyles}
-                    className="mb-4"
+                    className="text-sm"
                 />
                 
                 <button 
                     onClick={AddingTeamMember}
                     disabled={!teamMember.value || isLoading}
-                    className={`w-full py-2 px-4 rounded-md font-medium text-white transition-colors duration-200 
-                    ${!teamMember.value || isLoading ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+                    className={`w-full py-2 px-4 rounded-md font-medium text-white text-sm transition-colors duration-200 
+                    ${!teamMember.value || isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'} 
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
                 >
-                    {isLoading ? 'Adding...' : 'Add Member'}
+                    {isLoading ? (
+                        <div className="flex items-center justify-center">
+                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Adding...
+                        </div>
+                    ) : 'Add Member'}
                 </button>
                 
                 {message.text && (
-                    <div className={`mt-2 p-2 rounded text-sm ${
-                        message.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
+                    <div className={`p-3 rounded-md text-sm border ${
+                        message.type === 'success' 
+                            ? 'bg-green-50 text-green-800 border-green-200' 
+                            : 'bg-red-50 text-red-800 border-red-200'
                     }`}>
-                        {message.text}
+                        <div className="flex items-center">
+                            {message.text}
+                        </div>
                     </div>
                 )}
             </div>

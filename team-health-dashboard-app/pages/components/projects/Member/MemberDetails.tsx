@@ -42,9 +42,9 @@ const MemberDetails = (props) => {
     const isDeleting = deleteMemberMutation.isPending;
     
     return (
-        <div className="bg-white rounded-lg shadow-sm p-4 flex justify-between items-center border border-gray-100 hover:shadow-md transition-all duration-200 relative">
-            <div className="flex items-center space-x-2">
-                <h3 className="font-medium text-gray-800">
+        <div className="bg-white rounded-lg border border-gray-200 p-3 flex justify-between items-center hover:shadow-sm transition-all duration-200 relative">
+            <div className="flex items-center">
+                <h3 className="font-medium text-gray-800 text-sm">
                     {props.member.first_name} {props.member.last_name}
                 </h3>
             </div>
@@ -52,19 +52,19 @@ const MemberDetails = (props) => {
             <button 
                 onClick={handleDeleteClick}
                 disabled={isDeleting}
-                className="text-sm px-3 py-1 bg-red-50 hover:bg-red-100 text-red-600 rounded-md transition-colors duration-200 flex items-center disabled:opacity-50"
+                className="text-xs px-3 py-1 bg-red-50 hover:bg-red-100 text-red-600 rounded-md transition-colors duration-200 flex items-center disabled:opacity-50 border border-red-200"
             >
                 {isDeleting ? (
-                    <Loader2 size={14} className="animate-spin" />
+                    <Loader2 size={12} className="animate-spin" />
                 ) : (
                     "Remove"
                 )}
             </button>
             
             {showConfirm && (
-                <div className="absolute inset-0 bg-white bg-opacity-95 rounded-lg flex items-center justify-center border-2 border-red-200">
-                    <div className="text-center p-4">
-                        <p className="text-sm text-gray-700 mb-3">
+                <div className="absolute inset-0 bg-white bg-opacity-95 rounded-lg flex items-center justify-center border-2 border-red-200 backdrop-blur-sm">
+                    <div className="text-center p-3">
+                        <p className="text-xs text-gray-700 mb-3">
                             Remove "{props.member.first_name} {props.member.last_name}"?
                         </p>
                         <div className="flex gap-2 justify-center">
@@ -73,13 +73,13 @@ const MemberDetails = (props) => {
                                 disabled={isDeleting}
                                 className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 disabled:opacity-50 flex items-center gap-1"
                             >
-                                {isDeleting && <Loader2 size={12} className="animate-spin" />}
+                                {isDeleting && <Loader2 size={10} className="animate-spin" />}
                                 Remove
                             </button>
                             <button
                                 onClick={handleCancelDelete}
                                 disabled={isDeleting}
-                                className="px-3 py-1 bg-gray-300 text-gray-700 text-xs rounded hover:bg-gray-400 disabled:opacity-50"
+                                className="px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded hover:bg-gray-300 disabled:opacity-50"
                             >
                                 Cancel
                             </button>

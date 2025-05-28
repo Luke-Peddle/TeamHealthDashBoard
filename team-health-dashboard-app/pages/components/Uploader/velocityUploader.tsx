@@ -75,7 +75,7 @@ const VelocityUploader = () => {
           onClick={() => setIsModalOpen(true)}
           className="px-4 py-2  bg-blue-600 text-white text-sm font-medium rounded-md hover:white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors flex items-center"
         >
-        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <Plus size = {25}/>
         </svg>
           Import Velocity Data
@@ -99,10 +99,6 @@ const VelocityUploader = () => {
                 </svg>
               </button>
             </div>
-            
-            <p className="text-sm text-gray-600 mb-4">
-              Upload a CSV file with velocity data. The file should include sprint_name and story_points_completed columns.
-            </p>
             
             <div className="w-full mb-4">
               <div className="flex items-center justify-center w-full">
