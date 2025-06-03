@@ -55,6 +55,27 @@ const projectController = {
          return res.status(201).json(projects);
     },
 
+    async getProjectByContributorId(req, res) {
+        console.log(req.params)
+        const id = req.params.id;
+        console.log("id: " + id)
+    
+        const cacheKey = `projects_contributor:${id}`;
+        const cacheData = await redisClient.get(cacheKey);
+        
+        if(cacheData){
+            const projects = JSON.parse(cacheData)
+            console.log(projects);
+            return res.status(201).json(projects)
+                }
+
+    
+         const projects = await projectModules.geContributorProjects(id);
+         await redisClient.set(`projects_manager:${id}`, JSON.stringify(projects));
+         console.log(projects)
+         return res.status(201).json(projects);
+    },
+
     async getAllProjects(req, res) {
 
         const projects = await projectModules.getAllProjects();

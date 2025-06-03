@@ -7,6 +7,7 @@ router.post('/addMember/:project_id/:user_id', projectController.addMemberToProj
 router.get('/', projectController.getAllProjects);
 router.get('/:id', projectController.getProjectById);
 router.get('/manager/:id', projectController.getProjectByManagerId);
+router.get('/contributor/:id', projectController.getProjectByContributorId)
 router.patch('/:id', projectController.updateProject);
 router.delete('/:id/:manager_id', projectController.DeleteProject);
 

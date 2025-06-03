@@ -130,7 +130,23 @@ const projectModules = {
                 console.log(error)
                 throw error;
                 }
-    }
+    },
+    async geContributorProjects(id){
+            try{
+                const results = await db.query(
+                   'SELECT p.* FROM project p  JOIN project_members pm ON pm.project_id = p.id  WHERE pm.user_id = $1 ORDER BY p.name',
+                    [id]
+                )
+        
+                console.log(results)
+                return results.rows;
+        
+            }
+            catch (error) {
+                console.log(error)
+                throw error;
+              }
+        },
 }
 
 module.exports = projectModules;
