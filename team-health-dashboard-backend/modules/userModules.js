@@ -53,6 +53,24 @@ const userModel ={
           }
     },
 
+    async getUserByEmail(email){
+        try{
+            const results = await db.query(
+               'SELECT * FROM users WHERE email = $1',
+                [email]
+                
+            )
+    
+            console.log(results)
+            return results.rows[0];
+    
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+          }
+    },
+
     async updateUser(id, username, firstName,lastName, email, role){
         try{
            
@@ -88,7 +106,110 @@ const userModel ={
             console.log(error)
             throw error;
           }
-    }
+    },
+
+    async getContributors(){
+        const role = "contributor"
+        try{
+            const results = await db.query(
+               'SELECT * FROM users WHERE role = $1',
+                [role]
+            )
+    
+            console.log(results)
+            return results.rows[0];
+    
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+          }
+    },
+    async getTeamMembers(id){
+        try{
+            const results = await db.query(
+               'SELECT DISTINCT u.* FROM users u JOIN project_members p ON u.user_id = p.user_id WHERE p.project_id = $1',
+                [id]
+            )
+    
+            console.log(results)
+            return results.rows;
+    
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+          }
+    },
+
+    async getUsersNotInProject(id){
+        const role = 'contributor'
+        try{
+            const results = await db.query(
+               'SELECT u.* FROM users u WHERE u.role = $2 AND u.user_id NOT IN (SELECT user_id FROM project_members WHERE project_id = $1)',
+                [id,role]
+            )
+    
+            console.log(results)
+            return results.rows;
+    
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+          }
+    },
+
+    async removeUserFromProject(project_id, user_id){
+        try{
+            const results = await db.query(
+               'DELETE FROM project_members WHERE user_id = $2 AND project_id = $1',
+                [project_id, user_id]
+            )
+    
+            console.log(results)
+            return results.rows;
+    
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+          }
+    },
+
+    async removeUserFromProjectByProject_id(project_id){
+        try{
+            const results = await db.query(
+               'DELETE FROM project_members WHERE project_id = $1',
+                [project_id]
+            )
+    
+            console.log(results)
+            return results.rows;
+    
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+          }
+    },
+
+    async checkIfUserInTeam(user_id, project_id){
+        try{
+            const results = await db.query(
+               'SELECT * FROM project_members WHERE user_id = $1 AND  project_id = $2',
+                [user_id, project_id]
+            )
+    
+            console.log(results)
+            return results.rows;
+    
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+          }
+    },
 }
 
 
