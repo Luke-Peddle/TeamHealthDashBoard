@@ -12,6 +12,12 @@ const pulseSurveyController ={
         console.log("Enter failed valied score");
         return res.status(500).end();
        }
+
+       const checkSurvey = await pulseSurveyModules.getPulseByDateAndUserId(user_id,day,project_id);
+
+       if(checkSurvey){
+        return res.status(500).end()
+       }
     const newPulse = await pulseSurveyModules.createPulse( user_id,project_id,score, comment,day);
     console.log(newPulse)
     res.status(201).json(newPulse);

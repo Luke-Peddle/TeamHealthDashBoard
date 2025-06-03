@@ -1,6 +1,6 @@
 const db = require('../utils/db')
 
-const pulseSurveyModules ={
+const pulseSurveyModules = {
    async createPulse (user_id,project_id,score, comment,day){
         try{
                     const results = await db.query(
@@ -17,6 +17,22 @@ const pulseSurveyModules ={
                     console.log(error)
                     throw error;
                   }
+   },
+   
+   async getPulseByDateAndUserId (user_id, day, project_id){
+    try{
+        const results = await db.query(
+            'SELECT * FROM pulse_surveys WHERE user_id = $1 AND day = $2 AND project_id = $3',
+            [user_id, day, project_id]
+        )
+
+        console.log(results)
+        return results.rows[0]
+    }
+    catch (error){
+        console.log(error)
+        throw error
+    }
    }
    
     }
