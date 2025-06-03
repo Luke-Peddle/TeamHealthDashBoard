@@ -3,6 +3,13 @@ import axios from "axios";
 import AddingUser from './addingUser/addingUser';
 import UsersList from './UsersList/UsersList';
 import {User} from '@/types/user';
+import { useQuery } from '@tanstack/react-query';
+
+
+const fetchUsers = async () => {
+    const response = await axios.get(`http://localhost:4000/api/users`);
+    return response.data;
+};
 
 export async function getServerSideProps() {
   
@@ -21,7 +28,7 @@ interface UsersProps {
   users: User[] 
 }
 
-const Page: React.FC<UsersProps> = ({ users }) => {
+const Page: React.FC<UsersProps> = ({ users:intialUsers }) => {
   const clearCache = () => {
      axios.get("http://localhost:4000/api/cache/clearCache" )
      .then(response => {
@@ -32,6 +39,13 @@ const Page: React.FC<UsersProps> = ({ users }) => {
       console.error('There was an error clearing the cache', error);
   });
   }
+
+  const { data: users } = useQuery({
+          queryKey: ['users'],
+          queryFn: () => fetchUsers(),
+          initialData: intialUsers,
+          staleTime: 2 * 60 * 1000, 
+      });
 
   return (
     <div className="bg-gray-50 min-h-screen py-8 px-4">

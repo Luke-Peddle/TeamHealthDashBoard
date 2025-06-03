@@ -3,14 +3,19 @@ import { useRouter } from 'next/router'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { X, Loader2 } from 'lucide-react';
+import { sprints } from '@/types/sprints'; 
 
-const Sprint = (props) => {
+interface SprintProps {
+  sprint: sprints;
+  project_id: number;
+}
+
+const Sprint: React.FC<SprintProps> = ({ sprint, project_id }) => {
   const [showConfirm, setShowConfirm] = useState(false);
-  const startDate = new Date(props.sprint.start_date)
-  const endDate = new Date(props.sprint.end_date)
+  const startDate = new Date(sprint.start_date)
+  const endDate = new Date(sprint.end_date)
   const queryClient = useQueryClient();
-  const id = props.sprint.id
-  const project_id = props.project_id
+  const id = sprint.id
   
   console.log("Sprint project id: " + project_id)
 
@@ -54,11 +59,11 @@ const Sprint = (props) => {
     <div className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm transition-shadow duration-200 relative">
       <div className="flex items-start justify-between">
         <a 
-          href={`http://localhost:3000/dashbaord/manager/sprint/${props.sprint?.id}`}
+          href={`http://localhost:3000/dashbaord/manager/sprint/${sprint?.id}`}
           className="flex-1 group"
         >
           <h3 className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors mb-1">
-            {props.sprint.name}
+            {sprint.name}
           </h3>
           <p className="text-xs text-gray-600">
             {startDate.toLocaleDateString('en-US', {
@@ -91,7 +96,7 @@ const Sprint = (props) => {
         <div className="absolute inset-0 bg-white bg-opacity-95 rounded-lg flex items-center justify-center border-2 border-red-200 backdrop-blur-sm">
           <div className="text-center p-3">
             <p className="text-xs text-gray-700 mb-3">
-              Delete "{props.sprint.name}"?
+              Delete "{sprint.name}"?
             </p>
             <div className="flex gap-2 justify-center">
               <button

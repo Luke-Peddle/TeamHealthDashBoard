@@ -4,8 +4,14 @@ import { useRouter } from 'next/router';
 import { X, Folder, Loader2 } from 'lucide-react';
 import {User} from '@/types/user';
 import axios from 'axios';
+import { Projects } from '@/types/project';
 
-const ProjectDetails = ({project, user_id}) => {
+interface projectProps{
+project: Projects
+user_id: number
+}
+
+const ProjectDetails: React.FC<projectProps> = ({project, user_id}) => {
     const queryClient = useQueryClient();
     const [showConfirm, setShowConfirm] = useState(false);
 

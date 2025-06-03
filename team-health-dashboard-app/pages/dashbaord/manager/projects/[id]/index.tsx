@@ -9,6 +9,8 @@ import Oncall from '@/pages/components/Oncall/Oncall';
 import { Button } from '@/components/ui/button';
 import { Menu, ChevronRight } from 'lucide-react';
 import Metrics from '@/pages/components/projects/KPICards/Metrics';
+import Charts from '@/pages/components/projects/Charts/Charts';
+
 
 const fetchProject = async (id) => {
     const response = await axios.get(`http://localhost:4000/api/project/${id}`);
@@ -130,7 +132,7 @@ const Index = ({ project: initialProject, sprints: initialSprints, teamMembers: 
     });
 
     const { data: velocityMetric } = useQuery({
-        queryKey: ['velocityMetric', projectId],
+        queryKey: ['velocityMetrics', projectId],
         queryFn: () => fetchVelocity(projectId),
         initialData: initialVelocityMetric,
         staleTime: 5 * 60 * 1000, 
@@ -185,33 +187,7 @@ const Index = ({ project: initialProject, sprints: initialSprints, teamMembers: 
                             </p>
                         </div>
 
-                        
-{/* 
-                        <div className="mt-8">
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4">Team Health Dashboard</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                <div className="bg-gray-50 rounded-lg p-4 border-2 border-dashed border-gray-300">
-                                    <h3 className="text-sm font-medium text-gray-500 mb-2">Current Velocity</h3>
-                                    <p className="text-2xl font-bold text-gray-400">--/--</p>
-                                    <p className="text-xs text-gray-400 mt-1">Coming soon</p>
-                                </div>
-                                <div className="bg-gray-50 rounded-lg p-4 border-2 border-dashed border-gray-300">
-                                    <h3 className="text-sm font-medium text-gray-500 mb-2">Incident Load</h3>
-                                    <p className="text-2xl font-bold text-gray-400">--</p>
-                                    <p className="text-xs text-gray-400 mt-1">Coming soon</p>
-                                </div>
-                                <div className="bg-gray-50 rounded-lg p-4 border-2 border-dashed border-gray-300">
-                                    <h3 className="text-sm font-medium text-gray-500 mb-2">Review Efficiency</h3>
-                                    <p className="text-2xl font-bold text-gray-400">-- hrs</p>
-                                    <p className="text-xs text-gray-400 mt-1">Coming soon</p>
-                                </div>
-                                <div className="bg-gray-50 rounded-lg p-4 border-2 border-dashed border-gray-300">
-                                    <h3 className="text-sm font-medium text-gray-500 mb-2">Team Morale</h3>
-                                    <p className="text-2xl font-bold text-gray-400">-.-/5</p>
-                                    <p className="text-xs text-gray-400 mt-1">Coming soon</p>
-                                </div>
-                            </div> */}
-                        {/* </div> */}
+        
                     </div>
                 ) : (
                     <div className="bg-white rounded-lg shadow-md p-6 mb-8">
@@ -230,10 +206,12 @@ const Index = ({ project: initialProject, sprints: initialSprints, teamMembers: 
                         sprint_id={sprints[0].id} 
                     />
                 </div>
+                
             </div>
+            <Charts velocityMetrics={velocityMetric} incidents={onCallMatrics} users={teamMembers} sprints = {sprints} />
             
             <div className=" left-4 flex gap-4 z-40">
-                <VelocityUploader />
+                <VelocityUploader project_id ={projectId}/>
                 <Oncall />
                 <CodeReviewUploader />
             </div>

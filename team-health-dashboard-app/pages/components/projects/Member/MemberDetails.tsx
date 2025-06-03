@@ -3,8 +3,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { Loader2 } from 'lucide-react';
+import { User } from '@/types/user';
 
-const MemberDetails = (props) => {
+interface MemberDetailsProps {
+    member: User;
+}
+
+const MemberDetails: React.FC<MemberDetailsProps> = ({ member }) => {
     const router = useRouter();
     const queryClient = useQueryClient();
     const [showConfirm, setShowConfirm] = useState(false);
@@ -12,7 +17,7 @@ const MemberDetails = (props) => {
 
     const deleteMemberMutation = useMutation({
         mutationFn: async () => {
-            await axios.delete(`http://localhost:4000/api/users/removeMember/${id}/${props.member.user_id}`);
+            await axios.delete(`http://localhost:4000/api/users/removeMember/${id}/${member.user_id}`);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['teamMembers', id] });
@@ -45,7 +50,7 @@ const MemberDetails = (props) => {
         <div className="bg-white rounded-lg border border-gray-200 p-3 flex justify-between items-center hover:shadow-sm transition-all duration-200 relative">
             <div className="flex items-center">
                 <h3 className="font-medium text-gray-800 text-sm">
-                    {props.member.first_name} {props.member.last_name}
+                    {member.first_name} {member.last_name}
                 </h3>
             </div>
             
@@ -65,7 +70,7 @@ const MemberDetails = (props) => {
                 <div className="absolute inset-0 bg-white bg-opacity-95 rounded-lg flex items-center justify-center border-2 border-red-200 backdrop-blur-sm">
                     <div className="text-center p-3">
                         <p className="text-xs text-gray-700 mb-3">
-                            Remove "{props.member.first_name} {props.member.last_name}"?
+                            Remove "{member.first_name} {member.last_name}"?
                         </p>
                         <div className="flex gap-2 justify-center">
                             <button

@@ -5,6 +5,7 @@ const redisClient = require('../utils/redis');
 const volocityController ={
     async createVolocityRecord(req,res){
         const { project_id, name,story_points } = req.body;
+        console.log("Project id: " + project_id);
 
         if(story_points <0){
             console.log("Invalid entry for story points");
@@ -16,9 +17,9 @@ const volocityController ={
 
        if(VelocityExisted ){
         console.log("Enter");
-        return
+        return res.status(500).end()
        }
-       console.log("sprint: " +  JSON.stringify(sprintResponse[0].id));
+       console.log("sprint: " +  JSON.stringify(sprintResponse));
        const newVolocityRecord = await velocityModules.createVolocityRecord(sprintResponse[0].id, project_id, story_points);
        res.status(201).json(newVolocityRecord);
     },

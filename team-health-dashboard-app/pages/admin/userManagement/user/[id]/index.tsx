@@ -11,6 +11,8 @@ interface UserProps {
   user: User 
 }
 
+
+
 export const getServerSideProps = async (context) => {
   try {
     const { id } = context.params;

@@ -2,10 +2,12 @@
 import React, {useState} from 'react';
 import axios from "axios";
 import { useRouter } from 'next/router';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 
 
 const AddingUser = () => {
-      const router = useRouter();
+    const queryClient = useQueryClient();
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [firstName, setFirstName] = useState('');
@@ -15,6 +17,44 @@ const AddingUser = () => {
     const [message, setMessage] = useState({ text: '', type: '' });
    
     console.log(userName);
+
+    const createUserMutation = useMutation({
+        mutationFn: async (newUser) =>{
+            const response = await  axios.post("http://localhost:4000/api/users", newUser);
+            return response.data;
+        },
+        onMutate: () =>{
+             setMessage({ text: 'Creating user...', type: 'info' });
+        }, 
+        onSuccess: (data) =>{
+            console.log('User created successfully:', data);
+            setMessage({ text: 'User created successfully!', type: 'success' });
+
+            setUserName('');
+            setPassword('');
+            setFirstName('');
+            setLastName('');
+            setEmail('');
+            setRole('');
+
+            queryClient.invalidateQueries({ queryKey: ['users'] });
+
+             setTimeout(() => {
+                setMessage({ text: '', type: '' });
+            }, 3000);
+        },
+
+        onError: (error) => {
+            console.error('There was an error creating the user!', error);
+            setMessage({ text: 'Error creating user', type: 'error' });
+            
+            setTimeout(() => {
+                setMessage({ text: '', type: '' });
+            }, 5000);
+        }
+    })
+
+    
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -29,29 +69,11 @@ const AddingUser = () => {
         }
         console.log(newUser);
 
-        setMessage({ text: 'Creating user...', type: 'info' });
+        createUserMutation.mutate(newUser);
 
-        axios.post("http://localhost:4000/api/users", newUser) 
-        .then(response => {
-            console.log('user created successfully:', response.data);
-            setMessage({ text: 'User created successfully!', type: 'success' });
-            
-            setUserName('');
-            setPassword('');
-            setFirstName('');
-            setLastName('');
-            setEmail('');
-            setRole('');
-
-            setTimeout(() => {
-                router.reload();
-              }, 1000);
-        })
-        .catch(error => {
-            console.error('There was an error creating the user!', error);
-            setMessage({ text: 'Error creating user', type: 'error' });
-        });
     }
+
+    const isSubmitting = createUserMutation.isPending;
 
     return (
         <div className="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">

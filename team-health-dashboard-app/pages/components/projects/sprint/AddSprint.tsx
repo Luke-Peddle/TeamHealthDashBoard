@@ -5,6 +5,13 @@ import axios from 'axios';
 import { CalendarIcon } from "lucide-react"
 import { useRouter } from 'next/router';
 
+interface NewSprintData {
+    start_date: string;
+    end_date: string;
+    project_id: string | number;
+    name: string;
+}
+
 const AddSprint = () => {
     const [name, setName] = useState('')
     const [startDate, setStartDate] = useState('');
@@ -15,7 +22,7 @@ const AddSprint = () => {
     const queryClient = useQueryClient();
     const { id } = router.query;
 
-    const createSprintMutation = useMutation({
+    const createSprintMutation = useMutation<any, Error, NewSprintData>({
         mutationFn: async (newSprint) => {
             const response = await axios.post("http://localhost:4000/api/sprint", newSprint);
             return response.data;
@@ -52,8 +59,13 @@ const AddSprint = () => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        if (!id || Array.isArray(id)) {
+        console.error('Invalid project ID');
+        return;
+    }
         
-        const newSprint = {
+        const newSprint: NewSprintData = {
             start_date: startDate,
             end_date: endDate,
             project_id: id,
