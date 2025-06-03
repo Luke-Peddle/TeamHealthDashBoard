@@ -2,15 +2,17 @@ import React from 'react'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios';
 import ProjectList from './manager/projects/projectList';
+import ContributorProjectList from '../components/contributor/dashbaord/ProjectList';
 
 const user = {
-  "user_id": 5,
-  "username": "Luke Peddle",
-  "password": "Luke5341",
-  "first_name": "Luke",
-  "last_name": "Peddle",
-  "email": "lukePeddle@gmail.com",
-  "role": "manager"
+  
+        "user_id": 24,
+        "username": "SamSmithy",
+        "password": "Sam1234",
+        "first_name": "Sam",
+        "last_name": "Smith",
+        "email": "sam@gmail.com",
+        "role": "contributor"
 };
 
 const fetchProjects = async (userId) => {
@@ -54,9 +56,17 @@ function toPlainObject(obj) {
 
 export async function getServerSideProps() {
   console.log('enter')
+  let response;
   try {
-    const response = await axios.get(`http://localhost:4000/api/project/manager/${user.user_id}`);
+    if(user.role === "manager"){
+     response = await axios.get(`http://localhost:4000/api/project/manager/${user.user_id}`);
     console.log(response.data);
+    }
+
+    else{
+       response = await axios.get(`http://localhost:4000/api/project/contributor/${user.user_id}`);
+    console.log(response.data);
+    }
     const projects = toPlainObject(response.data);
     return { 
       props: { 
@@ -93,7 +103,7 @@ const Index = ({projects: initialProjects, userId}) => {
         </div>
       ) : (
         <div>
-          <p className="text-gray-600">Contributor dashboard</p>
+          <ContributorProjectList projects={projects} user_id={user.user_id} />
         </div>
       )}
     </div>
