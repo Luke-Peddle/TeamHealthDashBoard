@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Menu, ChevronRight } from 'lucide-react';
 import Metrics from '@/pages/components/projects/KPICards/Metrics';
 import Charts from '@/pages/components/projects/Charts/Charts';
+import ContributorChart from '@/pages/components/contributorChart/ContributorChart';
 
 
 const fetchProject = async (id) => {
@@ -209,6 +210,8 @@ const Index = ({ project: initialProject, sprints: initialSprints, teamMembers: 
                 
             </div>
             <Charts velocityMetrics={velocityMetric} incidents={onCallMatrics} users={teamMembers} sprints = {sprints} />
+
+            <ContributorChart teamMembers={teamMembers} onCall = {onCallMatrics} reviewCounts = {codeReviewMatrics}/>
             
             <div className=" left-4 flex gap-4 z-40">
                 <VelocityUploader project_id ={projectId}/>
