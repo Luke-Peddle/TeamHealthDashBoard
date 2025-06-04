@@ -6,7 +6,7 @@ import {User} from '@/types/user';
 import { useQuery } from '@tanstack/react-query';
 
 
-const fetchUsers = async () => {
+const fetchUsers = async (id) => {
     const response = await axios.get(`http://localhost:4000/api/users`);
     return response.data;
 };
@@ -40,10 +40,10 @@ const Page: React.FC<UsersProps> = ({ users:intialUsers }) => {
   });
   }
 
-  const { data: users } = useQuery({
+  const { data: users, isLoading: projectLoading } = useQuery({
           queryKey: ['users'],
           queryFn: () => fetchUsers(),
-          initialData: intialUsers,
+          initialData: initialProject,
           staleTime: 2 * 60 * 1000, 
       });
 

@@ -38,7 +38,7 @@ const pulseSurveyModules = {
    async getPulseByProjectId ( project_id){
     try{
         const results = await db.query(
-            'SELECT * FROM pulse_surveys WHERE  project_id = $1',
+            'SELECT * FROM pulse_surveys WHERE  project_id = $1 ORDER BY day DESC',
             [project_id]
         )
 

@@ -11,6 +11,7 @@ import { Menu, ChevronRight } from 'lucide-react';
 import Metrics from '@/pages/components/projects/KPICards/Metrics';
 import Charts from '@/pages/components/projects/Charts/Charts';
 import ContributorChart from '@/pages/components/contributorChart/ContributorChart';
+import PulseServey from '@/pages/components/PulseServey/PulseServey';
 
 
 const fetchProject = async (id) => {
@@ -48,6 +49,11 @@ const fetchCodeReview = async (id) => {
     return response.data;
 };
 
+const fetchPulseSurvey = async (id) => {
+    const response = await axios.get(`http://localhost:4000/api/pulseSurvey/${id}`);
+    return response.data;
+};
+
 export async function getServerSideProps(context) {
     const { id } = context.params;
     console.log(id);
@@ -59,7 +65,8 @@ export async function getServerSideProps(context) {
         const nonTeamMembersResponse = await axios.get(`http://localhost:4000/api/users/nonTeamMembers/${id}`);
         const velocityMetricResponse = await axios.get(`http://localhost:4000/api/velocity/${id}`);
         const onCallMetricsResponse = await axios.get(`http://localhost:4000/api/oncall/${id}`);
-        const codeReviewMetricResponse = await axios.get(`http://localhost:4000/api/codeReview/${id}`)
+        const codeReviewMetricResponse = await axios.get(`http://localhost:4000/api/codeReview/${id}`);
+        const pulseResponse = await axios.get(`http://localhost:4000/api/pulseSurvey/${id}`)
         
 
         const project = projectResponse.data;
@@ -69,8 +76,9 @@ export async function getServerSideProps(context) {
         const velocityMetric = velocityMetricResponse.data;
         const onCallMatrics = onCallMetricsResponse.data;
         const codeReviewMatrics = codeReviewMetricResponse.data;
+        const pulseSurvey = pulseResponse.data;
         
-        console.log("Project: " + project);
+        console.log("pulse Surveys data: " +  pulseResponse.data);
         
         return { 
             props: { 
@@ -81,7 +89,8 @@ export async function getServerSideProps(context) {
                 projectId: id,
                 velocityMetric,
                 onCallMatrics,
-                codeReviewMatrics
+                codeReviewMatrics,
+                pulseSurvey
             } 
         };
     } catch (error) {
@@ -95,14 +104,16 @@ export async function getServerSideProps(context) {
                 projectId: id,
                 velocityMetric: [],
                 onCallMatrics: [],
-                codeReviewMatrics: []
+                codeReviewMatrics: [],
+                pulseSurvey: []
             } 
         };
     }
 }
 
-const Index = ({ project: initialProject, sprints: initialSprints, teamMembers: initialTeamMembers, nonTeamMembers: initialNonTeamMembers, projectId, velocityMetric: initialVelocityMetric, onCallMatrics: initialOnCallMetric, codeReview: initalCodeReview }) => {
+const Index = ({ project: initialProject, sprints: initialSprints, teamMembers: initialTeamMembers, nonTeamMembers: initialNonTeamMembers, projectId, velocityMetric: initialVelocityMetric, onCallMatrics: initialOnCallMetric, codeReview: initalCodeReview, pulseSurvey: initialPulseSurvey }) => {
     const [isPanelOpen, setIsPanelOpen] = useState(false);
+    
 
     const { data: project, isLoading: projectLoading } = useQuery({
         queryKey: ['project', projectId],
@@ -150,9 +161,15 @@ const Index = ({ project: initialProject, sprints: initialSprints, teamMembers: 
         queryFn: () => fetchCodeReview(projectId),
         initialData: initalCodeReview,
         staleTime: 5 * 60 * 1000, 
+    });
+    const { data: pulseSurvey } = useQuery({
+        queryKey: ['pulseSurvey', projectId],
+        queryFn: () => fetchPulseSurvey(projectId),
+        initialData: initialPulseSurvey,
+        staleTime: 5 * 60 * 1000, 
     })
 
-    
+    console.log('Pulse Survey Data: ' + pulseSurvey);
 
    
     return (
@@ -211,7 +228,7 @@ const Index = ({ project: initialProject, sprints: initialSprints, teamMembers: 
             </div>
             <Charts velocityMetrics={velocityMetric} incidents={onCallMatrics} users={teamMembers} sprints = {sprints} />
 
-            <ContributorChart teamMembers={teamMembers} onCall = {onCallMatrics} reviewCounts = {codeReviewMatrics}/>
+            <ContributorChart teamMembers={teamMembers} onCall = {onCallMatrics} reviewCounts = {codeReviewMatrics} pulseSurvey={pulseSurvey}/>
             
             <div className=" left-4 flex gap-4 z-40">
                 <VelocityUploader project_id ={projectId}/>

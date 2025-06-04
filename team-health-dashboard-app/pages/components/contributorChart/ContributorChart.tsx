@@ -1,13 +1,14 @@
 import React from 'react'
 import MemberDetails from './memberDetails';
 
-const ContributorChart = ({teamMembers, onCall, reviewCounts}) => {
+const ContributorChart = ({teamMembers, onCall, reviewCounts,pulseSurvey}) => {
 
-     if (!teamMembers || !onCall || !reviewCounts) {
+     if (!teamMembers || !onCall || !reviewCounts || !pulseSurvey) {
        return <div className="p-4">Loading metrics...</div>;
    }
 
     teamMembers.forEach(member => {
+        console.log("Pulse survey: " + pulseSurvey)
         const memberOncallAmount = onCall.filter(record =>
             record.user_id === member.user_id
         )
@@ -25,6 +26,13 @@ const ContributorChart = ({teamMembers, onCall, reviewCounts}) => {
         memberReviewCounts.forEach(review => {
              member.totalReviews += review.prs_reviewed
         });
+
+        const pulseScore = pulseSurvey.filter(record =>
+            record.user_id === member.user_id
+        )
+
+        member.pusle = pulseScore[0].score
+        console.log("Member: " + JSON.stringify(member))
     });
 
     return (

@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Papa from 'papaparse';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { useRouter } from 'next/router';
 import { Plus, Upload, X } from "lucide-react"
 
 const VelocityUploader = ({project_id}) => {
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const [data, setData] = useState([]);
