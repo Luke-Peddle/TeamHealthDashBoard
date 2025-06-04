@@ -22,6 +22,14 @@ const pulseSurveyController ={
     console.log(newPulse)
     res.status(201).json(newPulse);
     },
+
+    async getPulseByProjectId(req,res){
+        const id = req.params.id;
+
+        const pulses = await pulseSurveyModules.getPulseByProjectId(id);
+        console.log(pulses);
+        res.status(200).json(pulses);
+    }
 }
 
 module.exports = pulseSurveyController;

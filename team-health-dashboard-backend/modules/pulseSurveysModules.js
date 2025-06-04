@@ -33,6 +33,22 @@ const pulseSurveyModules = {
         console.log(error)
         throw error
     }
+   },
+
+   async getPulseByProjectId ( project_id){
+    try{
+        const results = await db.query(
+            'SELECT * FROM pulse_surveys WHERE  project_id = $1',
+            [project_id]
+        )
+
+        console.log(results)
+        return results.rows
+    }
+    catch (error){
+        console.log(error)
+        throw error
+    }
    }
    
     }
