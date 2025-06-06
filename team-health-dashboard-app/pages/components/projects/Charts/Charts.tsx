@@ -3,20 +3,20 @@ import VelocityChart from './VelocityChart';
 import IncidentsCharts from './IncidentsCharts';
 import { velocityCart } from '@/types/velocity';
 import { incidents } from '@/types/onCall';
-import { velocity } from '@/types/velocity';
-import { onCall } from '@/types/onCall';
-import { codeReview } from '@/types/codeReview';
+import { pulseChartProps } from '@/types/PulseChart';
 import { sprints } from '@/types/sprints';
 import { User } from '@/types/user';
+import PulseChart from './PulseChart';
 
 interface ChartsProps {
  users: User[] 
  sprints: sprints[]
  velocityMetrics: velocityCart[]
  incidents: incidents[]
+ pulseSurveys: pulseChartProps []
 }
 
-const Charts: React.FC<ChartsProps> = ({velocityMetrics, incidents, users, sprints}) => {
+const Charts: React.FC<ChartsProps> = ({velocityMetrics, incidents, users, sprints, pulseSurveys}) => {
 
    velocityMetrics.forEach(velocity => {
        const sprint = sprints?.find(sprint => sprint.id === velocity.sprint_id);
@@ -35,7 +35,15 @@ const Charts: React.FC<ChartsProps> = ({velocityMetrics, incidents, users, sprin
        incident.week_starting_date = date.toDateString();
    })
 
-   console.log(incidents[0]);
+   pulseSurveys.forEach((pulse) =>{
+    const user = users?.find(user => user.user_id === pulse.user_id);
+
+    if (user) {
+           pulse.username = `${user.first_name} ${user.last_name}`
+       }
+   })
+
+   
    
    return (
        <div className="space-y-8">
@@ -51,6 +59,10 @@ const Charts: React.FC<ChartsProps> = ({velocityMetrics, incidents, users, sprin
                
                <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
                    <IncidentsCharts incidents={incidents} />
+               </div>
+
+                 <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                   <PulseChart pulses={pulseSurveys} />
                </div>
            </div>
        </div>
