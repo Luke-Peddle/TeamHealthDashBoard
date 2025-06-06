@@ -3,20 +3,24 @@ import VelocityChart from './VelocityChart';
 import IncidentsCharts from './IncidentsCharts';
 import { velocityCart } from '@/types/velocity';
 import { incidents } from '@/types/onCall';
+import { codeReview } from '@/types/codeReview';
 import { pulseChartProps } from '@/types/PulseChart';
 import { sprints } from '@/types/sprints';
 import { User } from '@/types/user';
 import PulseChart from './PulseChart';
+import SprintChart from './SprintChart';
+import CodeReviewMetrics from '../KPICards/CodeReviewMetrics';
 
 interface ChartsProps {
  users: User[] 
  sprints: sprints[]
  velocityMetrics: velocityCart[]
+ codeReview: codeReview[]
  incidents: incidents[]
  pulseSurveys: pulseChartProps []
 }
 
-const Charts: React.FC<ChartsProps> = ({velocityMetrics, incidents, users, sprints, pulseSurveys}) => {
+const Charts: React.FC<ChartsProps> = ({velocityMetrics, incidents, codeReview, users, sprints, pulseSurveys}) => {
 
    velocityMetrics.forEach(velocity => {
        const sprint = sprints?.find(sprint => sprint.id === velocity.sprint_id);
@@ -63,6 +67,11 @@ const Charts: React.FC<ChartsProps> = ({velocityMetrics, incidents, users, sprin
 
                  <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
                    <PulseChart pulses={pulseSurveys} />
+               </div>
+
+               
+                 <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                   <SprintChart incidents={incidents} velocitites={velocityMetrics} codeReviews={codeReview} sprints = {sprints}/>
                </div>
            </div>
        </div>

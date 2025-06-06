@@ -230,7 +230,7 @@ const Index = ({ project: initialProject, sprints: initialSprints, teamMembers: 
                 </div>
                 
             </div>
-            <Charts velocityMetrics={velocityMetric} incidents={onCallMatrics} users={teamMembers} sprints = {sprints} pulseSurveys ={pulseSurvey}/>
+            <Charts velocityMetrics={velocityMetric} incidents={onCallMatrics} codeReview = {codeReviewMatrics} users={teamMembers} sprints = {sprints} pulseSurveys ={pulseSurvey}/>
 
             <ContributorChart teamMembers={teamMembers} onCall = {onCallMatrics} reviewCounts = {codeReviewMatrics} pulseSurvey={pulseSurvey}/>
             
