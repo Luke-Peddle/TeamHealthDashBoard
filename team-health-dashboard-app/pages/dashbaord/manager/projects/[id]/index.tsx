@@ -157,7 +157,7 @@ const Index = ({ project: initialProject, sprints: initialSprints, teamMembers: 
         staleTime: 5 * 60 * 1000, 
     });
     const { data: codeReviewMatrics } = useQuery({
-        queryKey: ['codeReviewMatrics', projectId],
+        queryKey: ['codeReviewMetrics', projectId],
         queryFn: () => fetchCodeReview(projectId),
         initialData: initalCodeReview,
         staleTime: 5 * 60 * 1000, 
@@ -217,16 +217,20 @@ const Index = ({ project: initialProject, sprints: initialSprints, teamMembers: 
             
             <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
                 <div className="bg-white rounded-lg shadow-md border border-gray-200 p-8 w-full max-w-6xl">
+                    <div>
+                        Current Sprint: {sprints[0].name}
+                    </div>
                     <Metrics 
                         velocityMetric={velocityMetric} 
                         onCallMetrics={onCallMatrics} 
-                        codeReviewMetrics={codeReviewMatrics} 
+                        codeReviewMetrics = {codeReviewMatrics} 
+                        pulseScores = {pulseSurvey}
                         sprint_id={sprints[0].id} 
                     />
                 </div>
                 
             </div>
-            <Charts velocityMetrics={velocityMetric} incidents={onCallMatrics} users={teamMembers} sprints = {sprints} />
+            <Charts velocityMetrics={velocityMetric} incidents={onCallMatrics} users={teamMembers} sprints = {sprints} pulseSurveys ={pulseSurvey}/>
 
             <ContributorChart teamMembers={teamMembers} onCall = {onCallMatrics} reviewCounts = {codeReviewMatrics} pulseSurvey={pulseSurvey}/>
             
