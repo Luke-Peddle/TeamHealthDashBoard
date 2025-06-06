@@ -1,6 +1,10 @@
 import React from 'react'
+import { MemberChart } from '@/types/user';
 
-const MemberDetails = ({member}) => {
+interface MemberChartProps{
+    member: MemberChart
+}
+const MemberDetails: React.FC<MemberChartProps> = ({member}) => {
 
     console.log("Member: " + JSON.stringify(member))
 

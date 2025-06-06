@@ -99,7 +99,6 @@ const IncidentsCharts: React.FC<IncidentsChartsProps> = ({incidents}) => {
    const uniqueUsers = Array.from(new Set(filteredIncidents.map(i => i.username).filter(Boolean)));
    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
-   console.log("Grouped data:", data);
 
    return (
        <div className="h-full">

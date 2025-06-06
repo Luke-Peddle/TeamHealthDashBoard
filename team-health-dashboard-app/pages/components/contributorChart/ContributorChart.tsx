@@ -1,21 +1,31 @@
 import React from 'react'
 import MemberDetails from './memberDetails';
+import { MemberChart } from '@/types/user';
+import { onCall } from '@/types/onCall';
+import { codeReview } from '@/types/codeReview';
+import { pulse } from '@/types/Pulse';
 
-const ContributorChart = ({teamMembers, onCall, reviewCounts,pulseSurvey}) => {
+interface ContributorChartProps{
+    teamMembers: MemberChart[]
+    onCall: onCall[]
+    reviewCounts: codeReview[]
+    pulseSurvey: pulse[]
+
+}
+const ContributorChart: React.FC<ContributorChartProps> = ({teamMembers, onCall, reviewCounts,pulseSurvey}) => {
 
      if (!teamMembers || !onCall || !reviewCounts || !pulseSurvey) {
        return <div className="p-4">Loading metrics...</div>;
    }
 
     teamMembers.forEach(member => {
-        console.log("Pulse survey: " + pulseSurvey)
         const memberOncallAmount = onCall.filter(record =>
             record.user_id === member.user_id
         )
 
         member.oncallTotal = 0;
         memberOncallAmount.forEach(oncall => {
-            member.oncallTotal += oncall.incidents_count
+        member.oncallTotal += oncall.incidents_count
         });
         
         const memberReviewCounts = reviewCounts.filter(record =>
@@ -31,8 +41,7 @@ const ContributorChart = ({teamMembers, onCall, reviewCounts,pulseSurvey}) => {
             record.user_id === member.user_id
         )
 
-        member.pusle = pulseScore[0].score
-        console.log("Member: " + JSON.stringify(member))
+        member.pulse = pulseScore[0].score
     });
 
     return (
