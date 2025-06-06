@@ -5,21 +5,31 @@ import CodeReviewMetrics from './CodeReviewMetrics';
 import { velocity } from '@/types/velocity';
 import { onCall } from '@/types/onCall';
 import { codeReview } from '@/types/codeReview';
+import PulseKPICard from './PulseKPICard';
+import { pulse } from '@/types/Pulse';
 
 interface MetricsProps {
    velocityMetric: velocity[]
    onCallMetrics: onCall[]
    codeReviewMetrics: codeReview[]
    sprint_id: number
+   pulseScores: pulse []
+
 }
 
-const Metrics: React.FC<MetricsProps> = ({ velocityMetric, onCallMetrics, codeReviewMetrics, sprint_id }) => {
-   const currentVelocity = velocityMetric?.find(velocity => velocity.sprint_id === sprint_id);
-   console.log("Code Review: " + codeReviewMetrics);
+const Metrics: React.FC<MetricsProps> = ({ velocityMetric, onCallMetrics, codeReviewMetrics, pulseScores, sprint_id }) => {
 
-   if (!velocityMetric || !onCallMetrics || !codeReviewMetrics) {
+         
+
+     if (!velocityMetric || !onCallMetrics || !codeReviewMetrics) {
        return <div>Loading metrics...</div>;
    }
+
+   const currentVelocity = velocityMetric?.find(velocity => velocity.sprint_id === sprint_id);
+
+  
+    console.log("Code Review: " + codeReviewMetrics);
+
 
    const currentOnCall = onCallMetrics?.filter(record => 
         record.sprint_id === sprint_id
@@ -29,22 +39,25 @@ const Metrics: React.FC<MetricsProps> = ({ velocityMetric, onCallMetrics, codeRe
         record.sprint_id === sprint_id
    );
 
-   console.log("Code: " + codeReviewMetrics.length)
 
    let incidentsCompleted = 0;
 
    currentOnCall.forEach(oncall => {
        incidentsCompleted += oncall.incidents_count
    })
-   console.log("On Call: " + onCallMetrics[0]);
 
    let prsReviewed = 0;
    let reviewTime = 0;
 
-   currentCodeReviews?.forEach(codeReview => {
+   currentCodeReviews.forEach(codeReview => {
        prsReviewed += codeReview.prs_reviewed
        console.log("res review in metric: " + prsReviewed)
-       reviewTime += codeReview.avg_review_time_hours
+       reviewTime += Number(codeReview.avg_review_time_hours)
+       console.log("review time type: " + reviewTime)
+
+       console.log("Code Review after process : " + JSON.stringify(codeReview))
+
+       console.log("res averge review time: " + typeof reviewTime)
    })
 
    return (
@@ -60,6 +73,8 @@ const Metrics: React.FC<MetricsProps> = ({ velocityMetric, onCallMetrics, codeRe
                    prReviewed={prsReviewed} 
                    avgReviewTime={reviewTime/2} 
                />
+
+               <PulseKPICard pulses = {pulseScores} />
            </div>
        </div>
    )
