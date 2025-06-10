@@ -64,6 +64,14 @@ const AddSprint = () => {
         console.error('Invalid project ID');
         return;
     }
+
+    if(endDate <= startDate){
+         setMessage({ text: 'End Date is before Start Date', type: 'error' });
+          setTimeout(() => {
+                setMessage({ text: '', type: '' });
+            }, 5000);
+            return;
+    }
         
         const newSprint: NewSprintData = {
             start_date: startDate,
