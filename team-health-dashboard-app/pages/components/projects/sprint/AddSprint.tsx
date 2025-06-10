@@ -12,7 +12,7 @@ interface NewSprintData {
     name: string;
 }
 
-const AddSprint = () => {
+const AddSprint = ({sprints}) => {
     const [name, setName] = useState('')
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -21,6 +21,23 @@ const AddSprint = () => {
     const router = useRouter();
     const queryClient = useQueryClient();
     const { id } = router.query;
+
+    const checkDataOverLap =(startDate: string, endDate: string): boolean =>{
+
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        return sprints.some(sprint => {
+            const sprintStart = new Date(sprint.start_date);
+            const sprintEnd = new Date(sprint.end_date);
+
+            return (
+                  (start >= sprintStart && start <= sprintEnd) ||
+                (end >= sprintStart && end <= sprintEnd)     ||
+                (start <= sprintStart && end >= sprintEnd)
+            )
+        })
+    }
 
     const createSprintMutation = useMutation<any, Error, NewSprintData>({
         mutationFn: async (newSprint) => {
@@ -68,6 +85,15 @@ const AddSprint = () => {
     if(endDate <= startDate){
          setMessage({ text: 'End Date is before Start Date', type: 'error' });
           setTimeout(() => {
+                setMessage({ text: '', type: '' });
+            }, 5000);
+            return;
+    }
+
+    if(checkDataOverLap(startDate, endDate)){
+         setMessage({ 
+                text: 'Sprint dates overlap with an existing sprint. Please choose different dates.', type: 'error' });
+            setTimeout(() => {
                 setMessage({ text: '', type: '' });
             }, 5000);
             return;

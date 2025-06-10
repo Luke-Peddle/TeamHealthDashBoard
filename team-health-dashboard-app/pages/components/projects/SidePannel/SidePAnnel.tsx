@@ -65,7 +65,7 @@ const SidePanel: React.FC<SidePanel> = ({
           
 
           
-            <AddSprint />
+            <AddSprint sprints={sprints}/>
           
           <Separator />
           
