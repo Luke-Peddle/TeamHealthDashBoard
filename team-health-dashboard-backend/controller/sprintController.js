@@ -7,8 +7,8 @@ const onCallModule = require('../modules/onCallModules');
 const sprintContoller = {
     async createSprint(req, res) {
 
-        const { start_date, end_date, project_id, name } = req.body;
-        const newSprint = await sprintModudles.createSprint( start_date, end_date, project_id,name);
+        const { start_date, end_date, project_id, name,story_point_target } = req.body;
+        const newSprint = await sprintModudles.createSprint( start_date, end_date, project_id,name,story_point_target);
         await redisClient.del(`sprint_project:${project_id}`)
         res.status(201).json(newSprint);
     },

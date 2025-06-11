@@ -2,12 +2,12 @@ const db = require('../utils/db')
 
 const sprintModules = {
 
-    async createSprint (start_date,end_date,project,name ) {
+    async createSprint (start_date,end_date,project,name,storyPointTarget ) {
 
         try{
             const results = await db.query(
-            'INSERT INTO sprints(start_date,end_date, project_id, name) VALUES ($1,$2,$3,$4)',
-            [start_date,end_date,project,name ]
+            'INSERT INTO sprints(start_date,end_date, project_id, name,story_point_target) VALUES ($1,$2,$3,$4,$5)',
+            [start_date,end_date,project,name, storyPointTarget ]
             )
 
             console.log(results)

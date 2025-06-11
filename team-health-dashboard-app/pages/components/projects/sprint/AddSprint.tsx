@@ -10,12 +10,14 @@ interface NewSprintData {
     end_date: string;
     project_id: string | number;
     name: string;
+    story_point_target: string
 }
 
 const AddSprint = ({sprints}) => {
     const [name, setName] = useState('')
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [storypointTarget, setStorypointTarget] = useState('');
     const [message, setMessage] = useState({ text: '', type: '' });
     
     const router = useRouter();
@@ -103,7 +105,8 @@ const AddSprint = ({sprints}) => {
             start_date: startDate,
             end_date: endDate,
             project_id: id,
-            name: name
+            name: name,
+            story_point_target: storypointTarget
         }
 
         createSprintMutation.mutate(newSprint);
@@ -139,6 +142,21 @@ const AddSprint = ({sprints}) => {
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
+                        required
+                        disabled={isSubmitting}
+                        placeholder="Enter sprint name"
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Story Point Target
+                    </label>
+                    <input
+                        type="text"
+                        value={storypointTarget}
+                        onChange={(e) => setStorypointTarget(e.target.value)}
                         required
                         disabled={isSubmitting}
                         placeholder="Enter sprint name"
