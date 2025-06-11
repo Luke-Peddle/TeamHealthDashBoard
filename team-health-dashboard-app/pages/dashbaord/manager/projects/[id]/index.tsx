@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
@@ -11,7 +11,7 @@ import { Menu, ChevronRight } from 'lucide-react';
 import Metrics from '@/pages/components/projects/KPICards/Metrics';
 import Charts from '@/pages/components/projects/Charts/Charts';
 import ContributorChart from '@/pages/components/contributorChart/ContributorChart';
-import PulseServey from '@/pages/components/PulseServey/PulseServey';
+import { ToastContainer, toast } from 'react-toastify';
 
 
 const fetchProject = async (id) => {
@@ -53,6 +53,8 @@ const fetchPulseSurvey = async (id) => {
     const response = await axios.get(`http://localhost:4000/api/pulseSurvey/${id}`);
     return response.data;
 };
+
+
 
 export async function getServerSideProps(context) {
     const { id } = context.params;
@@ -169,11 +171,89 @@ const Index = ({ project: initialProject, sprints: initialSprints, teamMembers: 
         staleTime: 5 * 60 * 1000, 
     })
 
+    const getCurrentSprint = () =>{
+         if (!sprints || sprints.length === 0) return null;
+
+        const today = new Date()
+
+        today.setHours(0, 0, 0, 0);
+
+        const currentSprint = sprints.find(sprint =>{
+
+            console.log("Sprint in find: " + JSON.stringify(sprint))
+            console.log('today: ' + today)
+
+            const startDate = new Date(sprint.start_date);
+            const endDate = new Date(sprint.end_date);
+
+            startDate.setHours(0, 0, 0, 0);
+            endDate.setHours(23, 59, 59, 999);
+        
+            return today >= startDate && today <= endDate;
+        });
+
+        console.log("Current sprint in function: " + currentSprint)
+
+        return currentSprint || null;
+    }
+
+    let currentSprint = getCurrentSprint();
+
+    console.log("Current sprint: " + currentSprint)
+
+    if(!currentSprint && sprints.length > 0){
+        currentSprint = sprints[0]
+
+    }
+        
+    let avgePulseScore = 0;
+
+    pulseSurvey.forEach((pulse) =>{
+        avgePulseScore += pulse.score;
+    });
+
+    avgePulseScore = avgePulseScore/pulseSurvey.length;
+    
+
     console.log('Pulse Survey Data: ' + pulseSurvey);
+
+    avgePulseScore = 2
+    useEffect(() => {
+        if (avgePulseScore < 3) {
+            const hasShownToast = sessionStorage.getItem('lowMoodToastShown');
+            if (!hasShownToast) {
+                toast("User mood is below 3");
+                sessionStorage.setItem('lowMoodToastShown', 'true');
+            }
+        }
+    }, [avgePulseScore]);
+
+    useEffect(() => {
+        if (avgePulseScore < 3) {
+            const hasShownToast = sessionStorage.getItem('lowMoodToastShown');
+            if (!hasShownToast) {
+                toast("User mood is below 3");
+                sessionStorage.setItem('lowMoodToastShown', 'true');
+            }
+        }
+    }, [avgePulseScore]);
+
+
+
 
    
     return (
         <div className="min-h-screen bg-gray-50 py-8">
+            <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
             <main className={`transition-all duration-300 ${isPanelOpen ? 'mr-80' : 'mr-0'}`}>
                 {project ? (
                     <div className="bg-white rounded-lg shadow-md p-6 mb-8">
@@ -214,26 +294,53 @@ const Index = ({ project: initialProject, sprints: initialSprints, teamMembers: 
                 )}
             </main>
 
-            
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-                <div className="bg-white rounded-lg shadow-md border border-gray-200 p-8 w-full max-w-6xl">
-                    <div>
-                        Current Sprint: {sprints[0].name}
+                <div className="px-6 mb-8">
+                    <div className="bg-white rounded-lg shadow-md p-6">
+                        <div className="mb-6">
+                            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                                Current Sprint: {currentSprint?.name || 'No active sprint'}
+                            </h2>
+                        </div>
+                        
+                        {currentSprint && (
+                            <Metrics 
+                                velocityMetric={velocityMetric} 
+                                onCallMetrics={onCallMatrics} 
+                                codeReviewMetrics={codeReviewMatrics} 
+                                pulseScores={pulseSurvey}
+                                sprint_id={currentSprint.id} 
+                            />
+                        )}
                     </div>
-                    <Metrics 
-                        velocityMetric={velocityMetric} 
-                        onCallMetrics={onCallMatrics} 
-                        codeReviewMetrics = {codeReviewMatrics} 
-                        pulseScores = {pulseSurvey}
-                        sprint_id={sprints[0].id} 
-                    />
                 </div>
-                
-            </div>
-            <Charts velocityMetrics={velocityMetric} incidents={onCallMatrics} codeReview = {codeReviewMatrics} users={teamMembers} sprints = {sprints} pulseSurveys ={pulseSurvey}/>
 
-            <ContributorChart teamMembers={teamMembers} onCall = {onCallMatrics} reviewCounts = {codeReviewMatrics} pulseSurvey={pulseSurvey}/>
-            
+            <div className="px-6 mb-8">
+                    <div className="bg-white rounded-lg shadow-md p-6">
+                        
+                        <Charts 
+                            velocityMetrics={velocityMetric} 
+                            incidents={onCallMatrics} 
+                            codeReview={codeReviewMatrics} 
+                            users={teamMembers} 
+                            sprints={sprints} 
+                            pulseSurveys={pulseSurvey}
+                            userRole = {"manager"}
+                        />
+                    </div>
+                </div>
+
+            <div className="px-6 mb-8">
+                    <div className="bg-white rounded-lg shadow-md p-6">
+                        <h2 className="text-xl font-semibold text-gray-800 mb-6">Team Performance</h2>
+                        <ContributorChart 
+                            teamMembers={teamMembers} 
+                            onCall={onCallMatrics} 
+                            reviewCounts={codeReviewMatrics} 
+                            pulseSurvey={pulseSurvey}
+                        />
+                    </div>
+                </div>
+
             <div className=" left-4 flex gap-4 z-40">
                 <VelocityUploader project_id ={projectId}/>
                 <Oncall />
