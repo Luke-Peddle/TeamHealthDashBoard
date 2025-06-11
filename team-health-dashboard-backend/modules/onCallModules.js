@@ -39,7 +39,7 @@ const onCallModule ={
         async getOnCallByProjectId (project_id){
                 try{
                     const results = await db.query(
-                                'Select * FROM oncall_metrics WHERE project_id = $1 ',
+                                'Select * FROM oncall_metrics WHERE project_id = $1 ORDER BY week_starting_date ASC',
                                 [project_id]
                                 )
                     

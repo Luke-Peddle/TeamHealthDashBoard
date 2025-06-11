@@ -17,7 +17,7 @@ const volocityController ={
 
        if(VelocityExisted ){
         console.log("Enter");
-        return res.status(500).end()
+        return res.status(400).end()
        }
        console.log("sprint: " +  JSON.stringify(sprintResponse));
        const newVolocityRecord = await velocityModules.createVolocityRecord(sprintResponse[0].id, project_id, story_points);
