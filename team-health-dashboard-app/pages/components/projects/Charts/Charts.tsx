@@ -9,6 +9,8 @@ import { sprints } from '@/types/sprints';
 import { User } from '@/types/user';
 import PulseChart from './PulseChart';
 import SprintChart from './SprintChart';
+import ContributorIncidentChart from './contributor/ContributorIncidentChart';
+import ContribuorPulseChart from './contributor/ContribuorPulseChart';
 import CodeReviewMetrics from '../KPICards/CodeReviewMetrics';
 
 interface ChartsProps {
@@ -18,15 +20,17 @@ interface ChartsProps {
  codeReview: codeReview[]
  incidents: incidents[]
  pulseSurveys: pulseChartProps []
+ userRole: string
 }
 
-const Charts: React.FC<ChartsProps> = ({velocityMetrics, incidents, codeReview, users, sprints, pulseSurveys}) => {
+const Charts: React.FC<ChartsProps> = ({velocityMetrics, incidents, codeReview, users, sprints, pulseSurveys,userRole}) => {
 
    velocityMetrics.forEach(velocity => {
        const sprint = sprints?.find(sprint => sprint.id === velocity.sprint_id);
        if (sprint) {
            const endDate = new Date(sprint.end_date)
            velocity.endDate = endDate.toDateString()
+           velocity.sprintName = sprint.name
        }
    })
    
@@ -47,7 +51,21 @@ const Charts: React.FC<ChartsProps> = ({velocityMetrics, incidents, codeReview, 
        }
    })
 
-   
+    const renderIncidentChart = () => {
+       if (userRole === 'manager') {
+           return <IncidentsCharts incidents={incidents} />;
+       } else {
+           return <ContributorIncidentChart incidents={incidents} />;
+       }
+   };
+
+   const renderPulseChart = () => {
+       if (userRole === 'manager') {
+           return <PulseChart pulses={pulseSurveys} />;
+       } else {
+           return <ContribuorPulseChart pulses={pulseSurveys} />;
+       }
+   };
    
    return (
        <div className="space-y-8">
@@ -61,12 +79,13 @@ const Charts: React.FC<ChartsProps> = ({velocityMetrics, incidents, codeReview, 
                    <VelocityChart velocityData={velocityMetrics} />
                </div>
                
+                
                <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-                   <IncidentsCharts incidents={incidents} />
+                   {renderIncidentChart()}
                </div>
 
                  <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-                   <PulseChart pulses={pulseSurveys} />
+                   {renderPulseChart()}
                </div>
 
                

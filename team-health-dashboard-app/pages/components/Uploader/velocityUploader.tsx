@@ -40,9 +40,14 @@ const VelocityUploader = ({project_id}) => {
     onError: (error) => {
       console.error('Upload failed:', error);
       setStatus({ type: 'error', message: 'Failed to upload data.' });
+
+      if(error.response.status === 400){
+          setStatus({ type: 'error', message: `You already uploaded velocity data for  this sprint`  });
+
+      }
       
       setTimeout(() => {
-        setStatus({ type: '', message: '' });
+        setStatus({ type: '', message: '' })
       }, 5000);
     }
   });
@@ -89,14 +94,7 @@ const VelocityUploader = ({project_id}) => {
           </svg>
           Import Velocity Data
         </button>
-        
-        {status.message && (
-          <div className={`mt-2 p-2 rounded text-sm ${
-            status.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
-          }`}>
-            {status.message}
-          </div>
-        )}
+       
       </div>
 
       {isModalOpen && (
@@ -104,6 +102,9 @@ const VelocityUploader = ({project_id}) => {
           <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4 md:mx-auto">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-bold text-gray-800">Import Velocity Data</h3>
+
+               
+              
               <button 
                 onClick={() => setIsModalOpen(false)}
                 className="text-gray-500 hover:text-gray-700 focus:outline-none"
@@ -111,6 +112,14 @@ const VelocityUploader = ({project_id}) => {
                 <X size={25} />
               </button>
             </div>
+
+            {status.message && (
+                <div className={`mt-2 p-2 rounded text-sm ${
+                  status.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
+                }`}>
+                  {status.message}
+                </div>
+              )}
             
             <div className="w-full mb-4">
               <div className="flex items-center justify-center w-full">
