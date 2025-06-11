@@ -2,10 +2,12 @@ import React, { useMemo } from 'react'
 import { useState } from 'react';
 import Select from 'react-select';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { Button } from '@/components/ui/button';
+import { Download } from 'lucide-react';
 
 const SprintChart = ({incidents, velocitites, codeReviews, sprints}) => {
-    // All hooks must be called before any early returns
     const [dateRange, setDateRange] = useState({ value: 'all', label: 'All Time' });
+    const [hiddenSeries, setHiddenSeries] = useState<{[key: string]: boolean}>({});
 
     const dateRangeOptions = [
        { value: 'all', label: 'All Time' },
@@ -16,11 +18,9 @@ const SprintChart = ({incidents, velocitites, codeReviews, sprints}) => {
     ];
    
     const processedData = useMemo(() => {
-        // Handle null data inside useMemo instead of early return
         if (!incidents || !velocitites || !codeReviews || !sprints) {
             return [];
         }
-        // Add sprint info to velocities
         velocitites.forEach(velocity => {
             const sprint = sprints?.find(sprint => sprint.id === velocity.sprint_id);
             if (sprint) {
@@ -31,7 +31,6 @@ const SprintChart = ({incidents, velocitites, codeReviews, sprints}) => {
             }
         })
 
-        // Add sprint info to incidents
         incidents.forEach(incident => {
             const sprint = sprints?.find(sprint => sprint.id === incident.sprint_id);
             if (sprint) {
@@ -42,7 +41,6 @@ const SprintChart = ({incidents, velocitites, codeReviews, sprints}) => {
             }
         })
 
-        // Add sprint info to code reviews
         codeReviews.forEach(code => {
             const sprint = sprints?.find(sprint => sprint.id === code.sprint_id);
             if (sprint) {
@@ -55,7 +53,6 @@ const SprintChart = ({incidents, velocitites, codeReviews, sprints}) => {
 
         const sprintData = {};
         
-        // Add velocity data
         velocitites.forEach(velocity => {
             if (velocity.sprint_name) {
                 if (!sprintData[velocity.sprint_name]) {
@@ -72,7 +69,6 @@ const SprintChart = ({incidents, velocitites, codeReviews, sprints}) => {
             }
         });
 
-        // Add incident data
         incidents.forEach(incident => {
             if (incident.sprint_name) {
                 if (!sprintData[incident.sprint_name]) {
@@ -89,7 +85,6 @@ const SprintChart = ({incidents, velocitites, codeReviews, sprints}) => {
             }
         });
 
-        // Add code review data
         codeReviews.forEach(code => {
             if (code.sprint_name) {
                 if (!sprintData[code.sprint_name]) {
@@ -148,7 +143,6 @@ const SprintChart = ({incidents, velocitites, codeReviews, sprints}) => {
 
     const filteredData = getFilteredData();
 
-    // Now safe to do early return after all hooks are called
     if (!incidents || !velocitites || !codeReviews || !sprints) {
         return (
             <div className="h-80 flex items-center justify-center">
@@ -164,6 +158,79 @@ const SprintChart = ({incidents, velocitites, codeReviews, sprints}) => {
         );
     }
 
+    const customTooltip = ({active, payload, label}: any) => {
+        if (active && payload && payload.length) {
+            const data = payload[0].payload;
+            
+            return (
+                <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg">
+                    <p className="font-semibold text-gray-800 mb-2">
+                        {data.sprintName}
+                    </p>
+                    <p className="text-gray-600 text-sm mb-2">
+                        Ended: {new Date(data.endDate).toLocaleDateString()}
+                    </p>
+                    <div className="space-y-1">
+                        {payload.map((entry: any, index: number) => (
+                            <div key={index} className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <div 
+                                        className="w-3 h-3 rounded-sm" 
+                                        style={{ backgroundColor: entry.color }}
+                                    />
+                                    <span className="text-sm text-gray-700">{entry.name}</span>
+                                </div>
+                                <span className="font-medium text-gray-900">{entry.value}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+        return null;
+    };
+
+    const handleLegendClick = (entry: any) => {
+        const {dataKey} = entry;
+        setHiddenSeries(prev => ({
+            ...prev,
+            [dataKey]: !prev[dataKey]
+        }))
+    }
+
+    const exportToCSV = () => {
+        const csvData = filteredData.map(sprint => ({
+            'Sprint Name': sprint.sprintName,
+            'End Date': new Date(sprint.endDate).toLocaleDateString(),
+            'Story Points Completed': sprint.velocity,
+            'Code Reviews': sprint.codeReviews,
+            'Incidents': sprint.incidents,
+        }));
+
+        const headers = Object.keys(csvData[0] || {});
+        const csvContent = [
+            headers.join(','),
+            ...csvData.map(row => 
+                headers.map(header => 
+                    typeof row[header] === 'string' && row[header].includes(',') 
+                    ? `"${row[header]}"` 
+                    : row[header]
+                ).join(',')
+            )
+        ].join('\n');
+
+        const blob = new Blob ([csvContent], {type: 'text/csv;charset=utf-8;'});
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `sprint-comparison-${dateRange.label.toLowerCase().replace(' ', '-')}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
     console.log("Incidents in sprint Chart", incidents[0]);
     console.log("velocities in sprint Chart", velocitites[0]);
     console.log("Code reviews in sprint Chart", codeReviews[0]);
@@ -173,8 +240,21 @@ const SprintChart = ({incidents, velocitites, codeReviews, sprints}) => {
 
     return (
         <div className="h-full">
-            <h3 className="text-lg font-semibold mb-4">Sprint Comparisons</h3>
-             <div className="flex items-center mb-6">
+            <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold">Sprint Comparisons</h3>
+                <Button 
+                    onClick={exportToCSV}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                    disabled={filteredData.length === 0}
+                >
+                    <Download className="w-4 h-4" />
+                    Export CSV
+                </Button>
+            </div>
+
+            <div className="flex items-center mb-6">
                <Select
                    value={dateRange}
                    onChange={(selectedOption) => {
@@ -184,6 +264,7 @@ const SprintChart = ({incidents, velocitites, codeReviews, sprints}) => {
                    }}
                    options={dateRangeOptions}
                    isSearchable={false}
+                   className="min-w-[200px]"
                />
            </div>
 
@@ -203,38 +284,41 @@ const SprintChart = ({incidents, velocitites, codeReviews, sprints}) => {
                             tick={{ fontSize: 12, fill: '#6b7280' }}
                             label={{ value: 'Count', angle: -90, position: 'insideLeft' }}
                         />
-                        <Tooltip 
-                            contentStyle={{
-                                backgroundColor: 'white',
-                                border: '1px solid #e5e7eb',
-                                borderRadius: '8px',
-                                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                        <Tooltip content={customTooltip} />
+                        <Legend 
+                            onClick={handleLegendClick}
+                            wrapperStyle={{ 
+                                cursor: 'pointer',
+                                paddingTop: '20px'
                             }}
                         />
-                        <Legend 
-                            wrapperStyle={{ paddingTop: '20px' }}
-                        />
+                        
                         <Bar 
                             dataKey="velocity" 
                             fill="#3b82f6"
                             name="Story Points Completed"
                             radius={[2, 2, 0, 0]}
+                            hide={hiddenSeries.velocity}
                         />
                         <Bar 
                             dataKey="codeReviews" 
                             fill="#10b981"
                             name="Code Reviews"
                             radius={[2, 2, 0, 0]}
+                            hide={hiddenSeries.codeReviews}
                         />
                         <Bar 
                             dataKey="incidents" 
                             fill="#ef4444"
                             name="Incidents"
                             radius={[2, 2, 0, 0]}
+                            hide={hiddenSeries.incidents}
                         />
                     </BarChart>
                 </ResponsiveContainer>
             </div>
+
+            
         </div>
     )
 }

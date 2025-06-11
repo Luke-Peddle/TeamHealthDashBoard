@@ -1,14 +1,17 @@
 import React, { useMemo, useState } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { pulseChartProps } from '@/types/PulseChart';
 import Select from 'react-select';
+import { Button } from '@/components/ui/button';
+import { Download } from 'lucide-react';
 
 interface PulseChartProps{
     pulses: pulseChartProps []
 }
 const PulseChart: React.FC<PulseChartProps> = ({ pulses }) => {
   const [dateRange, setDateRange] = useState({ value: 'all', label: 'All Time' });
-
+  const [hiddenSeries, setHiddenSeries] = useState<{[key: string]: boolean}>({});
+  
   const dateRangeOptions = [
     { value: 'all', label: 'All Time' },
     { value: 'last30', label: 'Last 30 Days' },
@@ -133,6 +136,69 @@ const PulseChart: React.FC<PulseChartProps> = ({ pulses }) => {
     return null;
   };
 
+  const exportToCSV = () => {
+       const csvData: any[] = [];
+       
+       processedData.forEach(dayData => {
+           uniqueUsernames.forEach(username => {
+               const score = dayData[username];
+               if (score !== null && score !== undefined) {
+                   csvData.push({
+                       'Date': dayData.fullDate,
+                       'Username': username,
+                       'Pulse Score': score,
+                       'Date Range': dateRange.label
+                   });
+               }
+           });
+       });
+
+       if (csvData.length === 0) {
+           processedData.forEach(dayData => {
+               const averageScore = uniqueUsernames.reduce((sum, username) => {
+                   const score = dayData[username];
+                   return sum + (typeof score === 'number' ? score : 0);
+               }, 0) / uniqueUsernames.filter(username => dayData[username] !== null).length;
+               
+               csvData.push({
+                   'Date': dayData.fullDate,
+                   'Average Pulse Score': averageScore || 0,
+               });
+           });
+       }
+
+       const headers = Object.keys(csvData[0] || {});
+       const csvContent = [
+           headers.join(','),
+           ...csvData.map(row => 
+               headers.map(header => 
+                   typeof row[header] === 'string' && row[header].includes(',') 
+                   ? `"${row[header]}"` 
+                   : row[header]
+               ).join(',')
+           )
+       ].join('\n');
+
+       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+       const link = document.createElement('a');
+       const url = URL.createObjectURL(blob);
+       link.setAttribute('href', url);
+       link.setAttribute('download', `pulse-data-${dateRange.label.toLowerCase().replace(' ', '-')}.csv`);
+       link.style.visibility = 'hidden';
+       document.body.appendChild(link);
+       link.click();
+       document.body.removeChild(link);
+       URL.revokeObjectURL(url);
+   };
+
+  const handleLegendClick = (entry: any) => {
+       const { dataKey } = entry;
+       setHiddenSeries(prev => ({
+           ...prev,
+           [dataKey]: !prev[dataKey]
+       }));
+   };
+
   if (!pulses || pulses.length === 0) {
     return (
       <div className="w-full h-64 flex items-center justify-center text-gray-500">
@@ -143,13 +209,25 @@ const PulseChart: React.FC<PulseChartProps> = ({ pulses }) => {
 
   return (
     <div className="w-full">
-      <div className="flex items-center mb-6">
+      <div className="flex items-center justify-between mb-6">
         <Select
           value={dateRange}
           onChange={setDateRange}
           options={dateRangeOptions}
           isSearchable={false}
+          className="min-w-[200px]"
         />
+
+        <Button 
+            onClick={exportToCSV}
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2"
+            disabled={processedData.length === 0}
+        >
+            <Download className="w-4 h-4" />
+            Export CSV
+        </Button>
       </div>
       
       <ResponsiveContainer width="100%" height={300}>
@@ -175,6 +253,13 @@ const PulseChart: React.FC<PulseChartProps> = ({ pulses }) => {
             ticks={[0, 1, 2, 3, 4, 5]}
           />
           <Tooltip content={<CustomTooltip />} />
+          <Legend 
+              onClick={handleLegendClick}
+              wrapperStyle={{ 
+                  cursor: 'pointer',
+                  paddingTop: '20px'
+              }}
+          />
           
           {uniqueUsernames.map((username, index) => (
             <Area
@@ -185,11 +270,13 @@ const PulseChart: React.FC<PulseChartProps> = ({ pulses }) => {
               fill={userColors[index % userColors.length]}
               fillOpacity={0.3}
               strokeWidth={2}
-              connectNulls={true} 
+              connectNulls={true}
+              hide={hiddenSeries[username]}
             />
           ))}
         </AreaChart>
       </ResponsiveContainer>
+
     </div>
   );
 };

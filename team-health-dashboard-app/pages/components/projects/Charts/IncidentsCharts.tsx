@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import Select from 'react-select';
+import { Button } from '@/components/ui/button';
+import { Download } from 'lucide-react';
 import { incidents } from '@/types/onCall';
 
 interface IncidentsChartsProps {
@@ -21,6 +23,7 @@ interface GroupedData {
 
 const IncidentsCharts: React.FC<IncidentsChartsProps> = ({incidents}) => {
    const [dateRange, setDateRange] = useState<SelectOption>({ value: 'all', label: 'All Time' });
+   const [hiddenSeries, setHiddenSeries] = useState<{[key: string]: boolean}>({});
 
    const dateRangeOptions: SelectOption[] = [
        { value: 'all', label: 'All Time' },
@@ -99,20 +102,133 @@ const IncidentsCharts: React.FC<IncidentsChartsProps> = ({incidents}) => {
    const uniqueUsers = Array.from(new Set(filteredIncidents.map(i => i.username).filter(Boolean)));
    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
+   const CustomTooltip = ({ active, payload, label }: any) => {
+       if (active && payload && payload.length) {
+           const totalIncidents = payload.reduce((sum: number, entry: any) => sum + (entry.value || 0), 0);
+           
+           return (
+               <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg min-w-[200px]">
+                   <p className="font-semibold text-gray-800 mb-2">
+                       Week of: {label}
+                   </p>
+                   <div className="space-y-1">
+                       {payload
+                           .filter((entry: any) => entry.value > 0)
+                           .sort((a: any, b: any) => b.value - a.value)
+                           .map((entry: any, index: number) => (
+                           <div key={index} className="flex items-center justify-between">
+                               <div className="flex items-center gap-2">
+                                   <div 
+                                       className="w-3 h-3 rounded-sm" 
+                                       style={{ backgroundColor: entry.color }}
+                                   />
+                                   <span className="text-sm text-gray-700">{entry.dataKey}</span>
+                               </div>
+                               <span className="font-medium text-gray-900">{entry.value}</span>
+                           </div>
+                       ))}
+                   </div>
+                   <div className="border-t border-gray-200 mt-2 pt-2">
+                       <div className="flex justify-between">
+                           <span className="text-sm font-medium text-gray-700">Total:</span>
+                           <span className="font-semibold text-gray-900">{totalIncidents}</span>
+                       </div>
+                   </div>
+               </div>
+           );
+       }
+       return null;
+   };
+
+   const handleLegendClick = (entry: any) => {
+       const { dataKey } = entry;
+       setHiddenSeries(prev => ({
+           ...prev,
+           [dataKey]: !prev[dataKey]
+       }));
+   };
+
+   const exportToCSV = () => {
+       const csvData: any[] = [];
+       
+       data.forEach(weekData => {
+           uniqueUsers.forEach(user => {
+               if (weekData[user] && typeof weekData[user] === 'number' && weekData[user] > 0) {
+                   csvData.push({
+                       'Week Starting': weekData.date,
+                       'Username': user,
+                       'Incident Count': weekData[user],
+                       'Date Range': dateRange.label
+                   });
+               }
+           });
+       });
+
+       if (csvData.length === 0) {
+           data.forEach(weekData => {
+               const totalIncidents = uniqueUsers.reduce((sum, user) => {
+                   return sum + (typeof weekData[user] === 'number' ? weekData[user] as number : 0);
+               }, 0);
+               
+               csvData.push({
+                   'Week Starting': weekData.date,
+                   'Total Incidents': totalIncidents,
+                   'Date Range': dateRange.label
+               });
+           });
+       }
+
+       const headers = Object.keys(csvData[0] || {});
+       const csvContent = [
+           headers.join(','),
+           ...csvData.map(row => 
+               headers.map(header => 
+                   typeof row[header] === 'string' && row[header].includes(',') 
+                   ? `"${row[header]}"` 
+                   : row[header]
+               ).join(',')
+           )
+       ].join('\n');
+
+       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+       const link = document.createElement('a');
+       const url = URL.createObjectURL(blob);
+       link.setAttribute('href', url);
+       link.setAttribute('download', `incidents-data-${dateRange.label.toLowerCase().replace(' ', '-')}.csv`);
+       link.style.visibility = 'hidden';
+       document.body.appendChild(link);
+       link.click();
+       document.body.removeChild(link);
+       URL.revokeObjectURL(url);
+   };
 
    return (
        <div className="h-full">
-           <div className="flex items-center mb-6">
-               <Select
-                   value={dateRange}
-                   onChange={(selectedOption) => {
-                       if (selectedOption) {
-                           setDateRange(selectedOption);
-                       }
-                   }}
-                   options={dateRangeOptions}
-                   isSearchable={false}
-               />
+           <div className="flex items-center justify-between mb-6">
+               <div className="flex items-center gap-4">
+                   <Select
+                       value={dateRange}
+                       onChange={(selectedOption) => {
+                           if (selectedOption) {
+                               setDateRange(selectedOption);
+                           }
+                       }}
+                       options={dateRangeOptions}
+                       isSearchable={false}
+                       className="min-w-[200px]"
+                   />
+               </div>
+               
+               <Button 
+                   onClick={exportToCSV}
+                   variant="outline"
+                   size="sm"
+                   className="flex items-center gap-2"
+                   disabled={filteredIncidents.length === 0}
+               >
+                   <Download className="w-4 h-4" />
+                   Export CSV
+               </Button>
            </div>
            
            <div className="h-80">
@@ -130,16 +246,13 @@ const IncidentsCharts: React.FC<IncidentsChartsProps> = ({incidents}) => {
                            tick={{ fontSize: 12, fill: '#6b7280' }}
                            label={{ value: 'Incidents', angle: -90, position: 'insideLeft' }}
                        />
-                       <Tooltip 
-                           contentStyle={{
-                               backgroundColor: 'white',
-                               border: '1px solid #e5e7eb',
-                               borderRadius: '8px',
-                               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                           }}
-                       />
+                       <Tooltip content={<CustomTooltip />} />
                        <Legend 
-                           wrapperStyle={{ paddingTop: '20px' }}
+                           onClick={handleLegendClick}
+                           wrapperStyle={{ 
+                               cursor: 'pointer',
+                               paddingTop: '20px'
+                           }}
                        />
                        {uniqueUsers.map((user, index) => (
                            <Bar 
@@ -148,11 +261,14 @@ const IncidentsCharts: React.FC<IncidentsChartsProps> = ({incidents}) => {
                                fill={colors[index % colors.length]}
                                name={user}
                                radius={[2, 2, 0, 0]}
+                               hide={hiddenSeries[user]}
                            />
                        ))}
                    </BarChart>
                </ResponsiveContainer>
            </div>
+
+          
        </div>
    );
 };
