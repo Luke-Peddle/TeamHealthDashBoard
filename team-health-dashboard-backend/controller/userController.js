@@ -141,6 +141,26 @@ async removeMember(req, res) {
 
      res.status(201).json(response);
 },
+
+async updateUserDarkMode(req, res) {
+    console.log(req.params)
+    const { user_id, dark_mode } = req.body;
+
+ 
+   let user
+
+    if (dark_mode === true){
+         user = await userModel.updateUserToLightMode(user_id);
+    }
+
+    else{
+         user = await userModel.updateUserToDarkMode(user_id)
+    }
+     await redisClient.del(`user:${user_id}`)
+     res.status(200).json(user);
+
+     
+},
 }
 
 module.exports = userController;
