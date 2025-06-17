@@ -43,7 +43,7 @@ const Page: React.FC<UsersProps> = ({ users:intialUsers }) => {
   const { data: users, isLoading: projectLoading } = useQuery({
           queryKey: ['users'],
           queryFn: () => fetchUsers(),
-          initialData: initialProject,
+          initialData: intialUsers,
           staleTime: 2 * 60 * 1000, 
       });
 
