@@ -5,7 +5,7 @@ const userModel ={
     async createUser(username, password, firstName,lastName, email, role){
         try{
             const results = await db.query(
-                'INSERT INTO users(username, password, first_name,last_name, email, role) VALUES ($1,$2,$3,$4,$5,$6)',
+                'INSERT INTO users(username, password, first_name,last_name, email, role,dark_mode) VALUES ($1,$2,$3,$4,$5,$6,false)',
                 [username, password, firstName,lastName, email, role]
             )
 
@@ -212,7 +212,47 @@ const userModel ={
             throw error;
           }
     },
+
+    async updateUserToDarkMode(id, ){
+        try{
+           
+            const results = await db.query(
+               ' UPDATE users  SET dark_mode = true WHERE user_id = $1',
+                [id]
+                
+            )
+    
+            console.log(results)
+            return results.rows;
+    
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+          }
+    },
+
+    async updateUserToLightMode(id ){
+        try{
+           
+            const results = await db.query(
+               ' UPDATE users  SET dark_mode = false WHERE user_id = $1',
+                [id]
+                
+            )
+    
+            console.log(results)
+            return results.rows;
+    
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+          }
+    },
 }
+
+
 
 
 
