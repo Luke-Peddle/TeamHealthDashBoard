@@ -47,6 +47,7 @@ const CodeReviewController ={
        const newOncallRecord = await codeReviewModule.createCodeReviewRecord(user.user_id,project_id, sprintResponse[0].id, prs_reviewed,avg_review_time_hours);
        
        console.log("code Review Record: " + newOncallRecord)
+       await redisClient.del(`code_reviews:${project_id}`);
 
        res.status(201).json(newOncallRecord);
     },
@@ -55,18 +56,18 @@ const CodeReviewController ={
         const id = req.params.id;
         console.log("id: " + id)
     
-        // const cacheKey = `projects_manager:${id}`;
-        // const cacheData = await redisClient.get(cacheKey);
+        const cacheKey = `code_reviews:${id}`;
+        const cacheData = await redisClient.get(cacheKey);
         
-        // if(cacheData){
-        //     const projects = JSON.parse(cacheData)
-        //     console.log(projects);
-        //     return res.status(201).json(projects)
-        //         }
+        if(cacheData){
+            const codeReviews = JSON.parse(cacheData)
+            console.log(codeReviews);
+            return res.status(201).json(codeReviews)
+                }
 
     
          const codeReviews = await codeReviewModule.getCodeReviewByProjectId(id);
-        //  await redisClient.set(`projects_manager:${id}`, JSON.stringify(projects));
+         await redisClient.set(`code_reviews:${id}`, JSON.stringify(codeReviews));
          console.log(codeReviews)
          return res.status(201).json(codeReviews);
     },

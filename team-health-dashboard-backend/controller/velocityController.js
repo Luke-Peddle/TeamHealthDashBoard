@@ -28,18 +28,18 @@ const volocityController ={
         const id = req.params.id;
         console.log("id: " + id)
     
-        // const cacheKey = `projects_manager:${id}`;
-        // const cacheData = await redisClient.get(cacheKey);
+        const cacheKey = `velocities:${id}`;
+        const cacheData = await redisClient.get(cacheKey);
         
-        // if(cacheData){
-        //     const projects = JSON.parse(cacheData)
-        //     console.log(projects);
-        //     return res.status(201).json(projects)
-        //         }
+        if(cacheData){
+            const velocities = JSON.parse(cacheData)
+            console.log(velocities);
+            return res.status(201).json(velocities)
+                }
 
     
          const velocity = await velocityModules.getVelocityByProjectId(id);
-        //  await redisClient.set(`projects_manager:${id}`, JSON.stringify(projects));
+         await redisClient.set(`velocities:${id}`, JSON.stringify(velocity));
          console.log(velocity)
          return res.status(201).json(velocity);
     },

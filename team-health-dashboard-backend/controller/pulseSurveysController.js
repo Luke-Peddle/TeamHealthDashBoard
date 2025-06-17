@@ -19,6 +19,7 @@ const pulseSurveyController ={
         return res.status(500).end()
        }
     const newPulse = await pulseSurveyModules.createPulse( user_id,project_id,score, comment,day);
+    await redisClient.del(`pulses:${project_id}`); 
     console.log(newPulse)
     res.status(201).json(newPulse);
     },
@@ -26,8 +27,19 @@ const pulseSurveyController ={
     async getPulseByProjectId(req,res){
         const id = req.params.id;
 
+         const cacheKey = `pulses:${id}`;
+        const cacheData = await redisClient.get(cacheKey);
+        
+        if(cacheData){
+            const pulses = JSON.parse(cacheData)
+            console.log(pulses);
+            return res.status(201).json(pulses)
+                }
+
+
         const pulses = await pulseSurveyModules.getPulseByProjectId(id);
         console.log(pulses);
+        await redisClient.set(`pulses:${id}`, JSON.stringify(pulses));
         res.status(200).json(pulses);
     }
 }

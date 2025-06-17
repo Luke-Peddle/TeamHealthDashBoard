@@ -11,4 +11,5 @@ export interface velocityCart{
     sprint_id: number,
     story_points_completed: number,
     endDate: string
+    sprintName: string
 }
