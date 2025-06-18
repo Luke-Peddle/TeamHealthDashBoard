@@ -7,25 +7,24 @@ interface OnCallKPIProps{
 
 const OnCallKPICard: React.FC<OnCallKPIProps> = ({onCallIncidents, aveCompletedPerPerson}) => {
     return (
-        <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-sm transition-shadow duration-200">
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-sm dark:hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-800">On-Call</h3>
-                
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">On-Call</h3>
             </div>
             
             <div className="space-y-4">
                 <div>
-                    <div className="text-2xl font-bold text-gray-900">
+                    <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                         {onCallIncidents}
                     </div>
-                    <p className="text-sm text-gray-600">Total incidents resolved</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Total incidents resolved</p>
                 </div>
                 
-                <div className="pt-3 border-t border-gray-100">
-                    <div className="text-lg font-semibold text-gray-700">
+                <div className="pt-3 border-t border-gray-100 dark:border-gray-700">
+                    <div className="text-lg font-semibold text-gray-700 dark:text-gray-200">
                         {aveCompletedPerPerson.toFixed(1)}
                     </div>
-                    <p className="text-sm text-gray-600">Average per team member</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Average per team member</p>
                 </div>
             </div>
         </div>

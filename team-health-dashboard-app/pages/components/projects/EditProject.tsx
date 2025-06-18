@@ -78,29 +78,29 @@ const EditProject: React.FC<EditProjectProps> = ({ project }) => {
 
    return (
        <div>
-           <h3 className="text-lg font-semibold text-gray-800 mb-4">
+           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
                Edit Project
            </h3>
        
            {message.text && (
                <div className={`mb-4 p-3 rounded-md text-sm border ${
-                   message.type === 'success' ? 'bg-green-50 text-green-800 border-green-200' : 
-                   message.type === 'error' ? 'bg-red-50 text-red-800 border-red-200' : 
-                   'bg-blue-50 text-blue-800 border-blue-200'
+                   message.type === 'success' ? 'bg-green-50 dark:bg-green-900 text-green-800 dark:text-green-200 border-green-200 dark:border-green-700' : 
+                   message.type === 'error' ? 'bg-red-50 dark:bg-red-900 text-red-800 dark:text-red-200 border-red-200 dark:border-red-700' : 
+                   'bg-blue-50 dark:bg-blue-900 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-700'
                }`}>
                    <div className="flex items-center">
                        {message.type === 'success' && (
-                           <svg className="h-4 w-4 mr-2 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                           <svg className="h-4 w-4 mr-2 text-green-500 dark:text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                            </svg>
                        )}
                        {message.type === 'error' && (
-                           <svg className="h-4 w-4 mr-2 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                           <svg className="h-4 w-4 mr-2 text-red-500 dark:text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                            </svg>
                        )}
                        {message.type === 'info' && (
-                           <svg className="h-4 w-4 mr-2 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                           <svg className="h-4 w-4 mr-2 text-blue-500 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zm-1 9a1 1 0 01-1-1v-4a1 1 0 112 0v4a1 1 0 01-1 1z" clipRule="evenodd" />
                            </svg>
                        )}
@@ -111,7 +111,7 @@ const EditProject: React.FC<EditProjectProps> = ({ project }) => {
 
            <form onSubmit={handleSubmit} className="space-y-4">
                <div>
-                   <label className="block text-sm font-medium text-gray-700 mb-1  items-center">
+                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 items-center">
                        Project Name
                    </label>
                    <input
@@ -121,7 +121,7 @@ const EditProject: React.FC<EditProjectProps> = ({ project }) => {
                        required
                        disabled={isSubmitting}
                        placeholder="Enter project name"
-                       className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                       className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 dark:disabled:bg-gray-700 disabled:text-gray-500 dark:disabled:text-gray-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                    />
                </div>
 
@@ -129,7 +129,7 @@ const EditProject: React.FC<EditProjectProps> = ({ project }) => {
                    type="submit"
                    disabled={isSubmitting || !name.trim()}
                    className={`w-full text-sm font-medium py-2 px-4 rounded-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex justify-center items-center
-                   ${isSubmitting || !name.trim() ? 'bg-blue-400 cursor-not-allowed text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+                   ${isSubmitting || !name.trim() ? 'bg-blue-400 cursor-not-allowed text-white' : 'bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-800 text-white'}`}
                >
                    {isSubmitting ? (
                        <>

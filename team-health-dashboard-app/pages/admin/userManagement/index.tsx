@@ -47,6 +47,8 @@ const Page: React.FC<UsersProps> = ({ users:intialUsers }) => {
           staleTime: 2 * 60 * 1000, 
       });
 
+      console.log("User: " + JSON.stringify(users[0]))
+
   return (
     <div className="bg-gray-50 min-h-screen py-8 px-4">
       <div className="max-w-6xl mx-auto">

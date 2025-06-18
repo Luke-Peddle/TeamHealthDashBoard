@@ -19,7 +19,11 @@ interface MetricsProps {
 const Metrics: React.FC<MetricsProps> = ({ velocityMetric, onCallMetrics, codeReviewMetrics, pulseScores, sprint_id }) => {
 
     if (!velocityMetric || !onCallMetrics || !codeReviewMetrics) {
-        return <div>Loading metrics...</div>;
+        return (
+            <div className="flex items-center justify-center p-8">
+                <div className="text-gray-600 dark:text-gray-400">Loading metrics...</div>
+            </div>
+        );
     }
 
     const currentVelocity = velocityMetric?.find(velocity => velocity.sprint_id === sprint_id);
@@ -55,9 +59,11 @@ const Metrics: React.FC<MetricsProps> = ({ velocityMetric, onCallMetrics, codeRe
     })
 
     return (
-        <div className="mt-8">
-            <h2 className="text-xl font-semibold text-gray-800 mb-6">Sprint KPIs</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="mt-8  ">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-6 transition-colors duration-200">
+                Sprint KPIs
+            </h2>
+            <div className=" grid-cols-1 md:grid-cols-2 gap-6">
                 <VelocityKPICard velocity={currentVelocity} />
                 <OnCallKPICard 
                     onCallIncidents={incidentsCompleted} 

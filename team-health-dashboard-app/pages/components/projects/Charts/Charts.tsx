@@ -70,26 +70,28 @@ const Charts: React.FC<ChartsProps> = ({velocityMetrics, incidents, codeReview, 
    return (
        <div className="space-y-8">
            <div className="text-center mb-8">
-               <h2 className="text-2xl font-bold text-gray-800 mb-2">Analytics Dashboard</h2>
-               <p className="text-gray-600">Sprint performance and incident tracking</p>
+               <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2 transition-colors duration-200">
+                   Analytics Dashboard
+               </h2>
+               <p className="text-gray-600 dark:text-gray-400 transition-colors duration-200">
+                   Sprint performance and incident tracking
+               </p>
            </div>
            
            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-               <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+               <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 shadow-sm dark:shadow-md transition-all duration-200">
                    <VelocityChart velocityData={velocityMetrics} />
                </div>
                
-                
-               <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+               <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 shadow-sm dark:shadow-md transition-all duration-200">
                    {renderIncidentChart()}
                </div>
 
-                 <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+               <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 shadow-sm dark:shadow-md transition-all duration-200">
                    {renderPulseChart()}
                </div>
 
-               
-                 <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+               <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 shadow-sm dark:shadow-md transition-all duration-200">
                    <SprintChart incidents={incidents} velocitites={velocityMetrics} codeReviews={codeReview} sprints = {sprints}/>
                </div>
            </div>

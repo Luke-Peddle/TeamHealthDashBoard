@@ -116,15 +116,15 @@ const AddSprint = ({sprints}) => {
 
     return (
         <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
                 Add Sprint
             </h3>
             
             {message.text && (
                 <div className={`mb-4 p-3 rounded-md text-sm border ${
-                    message.type === 'success' ? 'bg-green-50 text-green-800 border-green-200' : 
-                    message.type === 'error' ? 'bg-red-50 text-red-800 border-red-200' : 
-                    'bg-blue-50 text-blue-800 border-blue-200'
+                    message.type === 'success' ? 'bg-green-50 dark:bg-green-900 text-green-800 dark:text-green-200 border-green-200 dark:border-green-700' : 
+                    message.type === 'error' ? 'bg-red-50 dark:bg-red-900 text-red-800 dark:text-red-200 border-red-200 dark:border-red-700' : 
+                    'bg-blue-50 dark:bg-blue-900 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-700'
                 }`}>
                     <div className="flex items-center">
                       
@@ -135,7 +135,7 @@ const AddSprint = ({sprints}) => {
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Sprint Name
                     </label>
                     <input
@@ -145,12 +145,12 @@ const AddSprint = ({sprints}) => {
                         required
                         disabled={isSubmitting}
                         placeholder="Enter sprint name"
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                        className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 dark:disabled:bg-gray-700 disabled:text-gray-500 dark:disabled:text-gray-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                     />
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Story Point Target
                     </label>
                     <input
@@ -159,14 +159,14 @@ const AddSprint = ({sprints}) => {
                         onChange={(e) => setStorypointTarget(e.target.value)}
                         required
                         disabled={isSubmitting}
-                        placeholder="Enter sprint name"
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                        placeholder="Enter story point target"
+                        className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 dark:disabled:bg-gray-700 disabled:text-gray-500 dark:disabled:text-gray-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                     />
                 </div>
 
                 <div className="space-y-2">
-                    <label htmlFor="start-date" className="text-sm font-medium text-gray-700 flex items-center">
-                        <CalendarIcon className="h-4 w-4 mr-1 text-gray-500" />
+                    <label htmlFor="start-date" className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                        <CalendarIcon className="h-4 w-4 mr-1 text-gray-500 dark:text-gray-400" />
                         Start Date
                     </label>
                     <Input
@@ -176,13 +176,13 @@ const AddSprint = ({sprints}) => {
                         onChange={(e) => setStartDate(e.target.value)}
                         required
                         disabled={isSubmitting}
-                        className="w-full text-sm"
+                        className="w-full text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
                     />
                 </div>
 
                 <div className="space-y-2">
-                    <label htmlFor="end-date" className="text-sm font-medium text-gray-700 flex items-center">
-                        <CalendarIcon className="h-4 w-4 mr-1 text-gray-500" />
+                    <label htmlFor="end-date" className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                        <CalendarIcon className="h-4 w-4 mr-1 text-gray-500 dark:text-gray-400" />
                         End Date
                     </label>
                     <Input
@@ -192,7 +192,7 @@ const AddSprint = ({sprints}) => {
                         onChange={(e) => setEndDate(e.target.value)}
                         required
                         disabled={isSubmitting}
-                        className="w-full text-sm"
+                        className="w-full text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
                     />
                 </div>
 
@@ -200,7 +200,7 @@ const AddSprint = ({sprints}) => {
                     type="submit" 
                     disabled={isSubmitting}
                     className={`w-full text-sm font-medium py-2 px-4 rounded-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex justify-center items-center
-                    ${isSubmitting ? 'bg-blue-400 cursor-not-allowed text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+                    ${isSubmitting ? 'bg-blue-400 cursor-not-allowed text-white' : 'bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-800 text-white'}`}
                 >
                     {isSubmitting ? (
                         <>

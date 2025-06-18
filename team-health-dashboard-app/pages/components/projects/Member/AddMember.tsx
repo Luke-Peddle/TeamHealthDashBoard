@@ -62,28 +62,44 @@ const AddMember: React.FC<AddMemberProps> = ({members}) => {
    const isLoading = addMemberMutation.isPending;
    
    const customStyles = {
-       control: (provided: any) => ({
+       control: (provided: any, state: any) => ({
            ...provided,
            borderRadius: '0.375rem',
-           borderColor: '#d1d5db',
+           borderColor: state.theme === 'dark' ? '#4b5563' : '#d1d5db',
+           backgroundColor: state.theme === 'dark' ? '#374151' : '#ffffff',
            boxShadow: 'none',
            fontSize: '14px',
            minHeight: '38px',
            '&:hover': {
-               borderColor: '#9ca3af',
+               borderColor: state.theme === 'dark' ? '#6b7280' : '#9ca3af',
            },
+       }),
+       menu: (provided: any, state: any) => ({
+           ...provided,
+           backgroundColor: state.theme === 'dark' ? '#374151' : '#ffffff',
+           border: state.theme === 'dark' ? '1px solid #4b5563' : '1px solid #d1d5db',
        }),
        option: (provided: any, state: any) => ({
            ...provided,
-           backgroundColor: state.isSelected ? '#3b82f6' : state.isFocused ? '#eff6ff' : null,
-           color: state.isSelected ? 'white' : '#1f2937',
+           backgroundColor: state.isSelected 
+               ? (state.theme === 'dark' ? '#3b82f6' : '#3b82f6') 
+               : state.isFocused 
+               ? (state.theme === 'dark' ? '#4b5563' : '#eff6ff') 
+               : (state.theme === 'dark' ? '#374151' : '#ffffff'),
+           color: state.isSelected 
+               ? 'white' 
+               : (state.theme === 'dark' ? '#f9fafb' : '#1f2937'),
            fontSize: '14px',
+       }),
+       singleValue: (provided: any, state: any) => ({
+           ...provided,
+           color: state.theme === 'dark' ? '#f9fafb' : '#1f2937',
        }),
    };
    
    return (
        <div>
-           <h3 className="text-lg font-semibold text-gray-800 mb-4">
+           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
                Add Team Member
            </h3>
 
@@ -97,13 +113,23 @@ const AddMember: React.FC<AddMemberProps> = ({members}) => {
                    placeholder="Select a user to add..."
                    styles={customStyles}
                    className="text-sm"
+                   theme={(theme) => ({
+                       ...theme,
+                       colors: {
+                           ...theme.colors,
+                           primary: '#3b82f6',
+                           primary25: '#eff6ff',
+                           primary50: '#dbeafe',
+                           primary75: '#93c5fd',
+                       },
+                   })}
                />
                
                <button 
                    onClick={AddingTeamMember}
                    disabled={!teamMember?.value || isLoading}
                    className={`w-full py-2 px-4 rounded-md font-medium text-white text-sm transition-colors duration-200 
-                   ${!teamMember?.value || isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'} 
+                   ${!teamMember?.value || isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-800'} 
                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
                >
                    {isLoading ? (
@@ -120,8 +146,8 @@ const AddMember: React.FC<AddMemberProps> = ({members}) => {
                {message.text && (
                    <div className={`p-3 rounded-md text-sm border ${
                        message.type === 'success' 
-                           ? 'bg-green-50 text-green-800 border-green-200' 
-                           : 'bg-red-50 text-red-800 border-red-200'
+                           ? 'bg-green-50 dark:bg-green-900 text-green-800 dark:text-green-200 border-green-200 dark:border-green-700' 
+                           : 'bg-red-50 dark:bg-red-900 text-red-800 dark:text-red-200 border-red-200 dark:border-red-700'
                    }`}>
                        <div className="flex items-center">
                            {message.text}

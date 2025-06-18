@@ -1,14 +1,20 @@
 import React, { useMemo, useState } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { pulseChartProps } from '@/types/PulseChart';
 import Select from 'react-select';
+import { Button } from '@/components/ui/button';
+import { Download } from 'lucide-react';
+import { useTheme } from 'next-themes';
 
 interface PulseChartProps{
     pulses: pulseChartProps []
 }
+
 const PulseChart: React.FC<PulseChartProps> = ({ pulses }) => {
   const [dateRange, setDateRange] = useState({ value: 'all', label: 'All Time' });
-
+  const [hiddenSeries, setHiddenSeries] = useState<{[key: string]: boolean}>({});
+  const { theme } = useTheme();
+  
   const dateRangeOptions = [
     { value: 'all', label: 'All Time' },
     { value: 'last30', label: 'Last 30 Days' },
@@ -16,6 +22,38 @@ const PulseChart: React.FC<PulseChartProps> = ({ pulses }) => {
     { value: 'last6months', label: 'Last 6 Months' },
     { value: 'lastyear', label: 'Last Year' }
   ];
+
+  // React-select dark mode styles
+  const selectStyles = {
+      control: (provided: any) => ({
+          ...provided,
+          backgroundColor: theme === 'dark' ? '#374151' : '#ffffff',
+          borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
+          color: theme === 'dark' ? '#f9fafb' : '#111827',
+          '&:hover': {
+              borderColor: theme === 'dark' ? '#6b7280' : '#9ca3af',
+          },
+      }),
+      menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: theme === 'dark' ? '#374151' : '#ffffff',
+          border: theme === 'dark' ? '1px solid #4b5563' : '1px solid #d1d5db',
+      }),
+      option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused 
+              ? (theme === 'dark' ? '#4b5563' : '#f3f4f6')
+              : (theme === 'dark' ? '#374151' : '#ffffff'),
+          color: theme === 'dark' ? '#f9fafb' : '#111827',
+          '&:hover': {
+              backgroundColor: theme === 'dark' ? '#4b5563' : '#f3f4f6',
+          },
+      }),
+      singleValue: (provided: any) => ({
+          ...provided,
+          color: theme === 'dark' ? '#f9fafb' : '#111827',
+      }),
+  };
 
   const getFilteredPulses = () => {
     if (!pulses || pulses.length === 0) return [];
@@ -112,15 +150,15 @@ const PulseChart: React.FC<PulseChartProps> = ({ pulses }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg max-w-sm">
-          <p className="font-semibold mb-2">{label}</p>
+        <div className="bg-white dark:bg-gray-800 p-4 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg max-w-sm transition-colors duration-200">
+          <p className="font-semibold mb-2 text-gray-800 dark:text-gray-100">{label}</p>
           <div className="space-y-2">
             {uniqueUsernames.map(username => {
               const score = data[username];
               if (score !== null && score !== undefined) {
                 return (
                   <div key={username} className="border-l-2 pl-2" style={{borderColor: userColors[uniqueUsernames.indexOf(username) % userColors.length]}}>
-                    <p className="font-medium">{username}: {score}</p>
+                    <p className="font-medium text-gray-700 dark:text-gray-300">{username}: {score}</p>
                   </div>
                 );
               }
@@ -133,9 +171,71 @@ const PulseChart: React.FC<PulseChartProps> = ({ pulses }) => {
     return null;
   };
 
+  const exportToCSV = () => {
+       const csvData: any[] = [];
+       
+       processedData.forEach(dayData => {
+           uniqueUsernames.forEach(username => {
+               const score = dayData[username];
+               if (score !== null && score !== undefined) {
+                   csvData.push({
+                       'Date': dayData.fullDate,
+                       'Username': username,
+                       'Pulse Score': score,
+                   });
+               }
+           });
+       });
+
+       if (csvData.length === 0) {
+           processedData.forEach(dayData => {
+               const averageScore = uniqueUsernames.reduce((sum, username) => {
+                   const score = dayData[username];
+                   return sum + (typeof score === 'number' ? score : 0);
+               }, 0) / uniqueUsernames.filter(username => dayData[username] !== null).length;
+               
+               csvData.push({
+                   'Date': dayData.fullDate,
+                   'Average Pulse Score': averageScore || 0,
+               });
+           });
+       }
+
+       const headers = Object.keys(csvData[0] || {});
+       const csvContent = [
+           headers.join(','),
+           ...csvData.map(row => 
+               headers.map(header => 
+                   typeof row[header] === 'string' && row[header].includes(',') 
+                   ? `"${row[header]}"` 
+                   : row[header]
+               ).join(',')
+           )
+       ].join('\n');
+
+       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+       const link = document.createElement('a');
+       const url = URL.createObjectURL(blob);
+       link.setAttribute('href', url);
+       link.setAttribute('download', `pulse-data-${dateRange.label.toLowerCase().replace(' ', '-')}.csv`);
+       link.style.visibility = 'hidden';
+       document.body.appendChild(link);
+       link.click();
+       document.body.removeChild(link);
+       URL.revokeObjectURL(url);
+   };
+
+  const handleLegendClick = (entry: any) => {
+       const { dataKey } = entry;
+       setHiddenSeries(prev => ({
+           ...prev,
+           [dataKey]: !prev[dataKey]
+       }));
+   };
+
   if (!pulses || pulses.length === 0) {
     return (
-      <div className="w-full h-64 flex items-center justify-center text-gray-500">
+      <div className="w-full h-64 flex items-center justify-center text-gray-500 dark:text-gray-400 transition-colors duration-200">
         No pulse data available
       </div>
     );
@@ -143,13 +243,26 @@ const PulseChart: React.FC<PulseChartProps> = ({ pulses }) => {
 
   return (
     <div className="w-full">
-      <div className="flex items-center mb-6">
+      <div className="flex items-center justify-between mb-6">
         <Select
           value={dateRange}
           onChange={setDateRange}
           options={dateRangeOptions}
           isSearchable={false}
+          className="min-w-[200px]"
+          styles={selectStyles}
         />
+
+        <Button 
+            onClick={exportToCSV}
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2"
+            disabled={processedData.length === 0}
+        >
+            <Download className="w-4 h-4" />
+            Export CSV
+        </Button>
       </div>
       
       <ResponsiveContainer width="100%" height={300}>
@@ -162,19 +275,26 @@ const PulseChart: React.FC<PulseChartProps> = ({ pulses }) => {
             bottom: 0,
           }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+          <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#374151' : '#f0f0f0'} />
           <XAxis 
             dataKey="date" 
-            stroke="#666"
+            stroke={theme === 'dark' ? '#d1d5db' : '#666'}
             fontSize={12}
           />
           <YAxis 
-            stroke="#666"
+            stroke={theme === 'dark' ? '#d1d5db' : '#666'}
             fontSize={12}
             domain={[0, 5]}
             ticks={[0, 1, 2, 3, 4, 5]}
           />
           <Tooltip content={<CustomTooltip />} />
+          <Legend 
+              onClick={handleLegendClick}
+              wrapperStyle={{ 
+                  cursor: 'pointer',
+                  paddingTop: '20px'
+              }}
+          />
           
           {uniqueUsernames.map((username, index) => (
             <Area
@@ -185,7 +305,8 @@ const PulseChart: React.FC<PulseChartProps> = ({ pulses }) => {
               fill={userColors[index % userColors.length]}
               fillOpacity={0.3}
               strokeWidth={2}
-              connectNulls={true} 
+              connectNulls={true}
+              hide={hiddenSeries[username]}
             />
           ))}
         </AreaChart>

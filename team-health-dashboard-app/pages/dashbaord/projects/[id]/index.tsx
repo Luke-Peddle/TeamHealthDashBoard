@@ -8,7 +8,7 @@ import Metrics from '@/pages/components/projects/KPICards/Metrics';
 import Charts from '@/pages/components/projects/Charts/Charts';
 
 const user = {
-    "user_id": 24,
+    "user_id": 26,
     "username": "SamSmithy", 
     "password": "Sam1234",
     "first_name": "Sam",

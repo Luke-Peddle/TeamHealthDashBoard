@@ -16,7 +16,7 @@ interface UserProps {
 export const getServerSideProps = async (context) => {
   try {
     const { id } = context.params;
-    const response = await axios.get(`http://localhost:4000/api/users/id/${id}`);
+    const response = await axios.get(`http://localhost:4000/api/users/${id}`);
     console.log(response.data);
     const user = response.data;
     return { props: { user } };
@@ -80,7 +80,6 @@ const Users: React.FC<UserProps> = ({user}) => {
   return (
     <div className="max-w-md mx-auto my-8 bg-white rounded-lg shadow-md overflow-hidden">
       <div className="bg-gray-50 p-4 border-b">
-        <h2 className="text-xl font-bold text-gray-800">{user.username}</h2>
         <p className="text-gray-600">{user.first_name} {user.last_name}</p>
         <span className="mt-1 inline-block bg-blue-100 text-blue-700 text-xs font-medium px-2 py-0.5 rounded">
           {user.role}

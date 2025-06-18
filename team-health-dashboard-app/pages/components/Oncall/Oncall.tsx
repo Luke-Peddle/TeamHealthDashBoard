@@ -86,7 +86,7 @@ const Oncall = () => {
       <div>
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors flex items-center"
+          className="px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white text-sm font-medium rounded-md hover:bg-blue-700 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors flex items-center"
         >
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <Plus size={25}/>
@@ -96,7 +96,9 @@ const Oncall = () => {
         
         {status.message && (
           <div className={`mt-2 p-2 rounded text-sm ${
-            status.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
+            status.type === 'success' 
+              ? 'bg-green-50 dark:bg-green-900 text-green-800 dark:text-green-200' 
+              : 'bg-red-50 dark:bg-red-900 text-red-800 dark:text-red-200'
           }`}>
             {status.message}
           </div>
@@ -105,12 +107,12 @@ const Oncall = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4 md:mx-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4 md:mx-auto">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-gray-800">Import On-Call Data</h3>
+              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Import On-Call Data</h3>
               <button 
                 onClick={() => setIsModalOpen(false)}
-                className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none"
               >
                 <X size={25} />
               </button>
@@ -118,13 +120,13 @@ const Oncall = () => {
             
             <div className="w-full mb-4">
               <div className="flex items-center justify-center w-full">
-                <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <p className="mb-1 text-sm text-gray-500">
+                    <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">
                       <span className="font-semibold">Click to upload</span> or drag and drop
                     </p>
-                    <Upload size={25} className="w-8 h-8 mb-2 text-gray-500" />
-                    <p className="text-xs text-gray-500">CSV files only</p>
+                    <Upload size={25} className="w-8 h-8 mb-2 text-gray-500 dark:text-gray-400" />
+                    <p className="text-xs text-gray-500 dark:text-gray-400">CSV files only</p>
                   </div>
                   <input 
                     id="dropzone-file" 
@@ -138,8 +140,8 @@ const Oncall = () => {
             </div>
             
             {data.length > 0 && (
-              <div className="mb-4 p-2 bg-gray-50 rounded border border-gray-200">
-                <p className="text-sm text-gray-600">
+              <div className="mb-4 p-2 bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   <span className="font-medium">{data.length}</span> records found in CSV
                 </p>
               </div>
@@ -149,14 +151,14 @@ const Oncall = () => {
               <button 
                 onClick={() => setIsModalOpen(false)}
                 disabled={isLoading}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50 transition-colors disabled:opacity-50"
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-600 rounded-md hover:bg-gray-200 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50 transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
               <button 
                 onClick={addOncallRecord}
                 disabled={data.length === 0 || isLoading}
-                className={`px-4 py-2 text-sm font-medium text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors ${data.length === 0 || isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+                className={`px-4 py-2 text-sm font-medium text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors ${data.length === 0 || isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-800'}`}
               >
                 {isLoading ? 'Uploading...' : 'Upload Data'}
               </button>

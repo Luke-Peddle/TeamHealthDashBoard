@@ -16,7 +16,7 @@ const ContributorTable: React.FC<ContributorTableProps> = ({ teamMembers, onCall
     if (!teamMembers || !onCall || !reviewCounts || !pulseSurvey) {
         return (
             <div className="p-4">
-                <div className="text-center text-gray-500">Loading metrics...</div>
+                <div className="text-center text-gray-500 dark:text-gray-400">Loading metrics...</div>
             </div>
         );
     }
@@ -49,23 +49,23 @@ const ContributorTable: React.FC<ContributorTableProps> = ({ teamMembers, onCall
 
     return (
         <div className="p-4">
-            <h1 className="text-lg font-bold mb-4">Team Contributors</h1>
-            <table className="w-full border">
+            <h1 className="text-lg font-bold mb-4 text-gray-900 dark:text-gray-100">Team Contributors</h1>
+            <table className="w-full border border-gray-200 dark:border-gray-700">
                 <thead>
-                    <tr className="border-b bg-gray-50">
-                        <th className="p-3 text-left font-medium">Name</th>
-                        <th className="p-3 text-left font-medium">On-Call</th>
-                        <th className="p-3 text-left font-medium">Reviews</th>
-                        <th className="p-3 text-left font-medium">Recent Pulse Score</th>
+                    <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                        <th className="p-3 text-left font-medium text-gray-900 dark:text-gray-100">Name</th>
+                        <th className="p-3 text-left font-medium text-gray-900 dark:text-gray-100">On-Call</th>
+                        <th className="p-3 text-left font-medium text-gray-900 dark:text-gray-100">Reviews</th>
+                        <th className="p-3 text-left font-medium text-gray-900 dark:text-gray-100">Recent Pulse Score</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className="bg-white dark:bg-gray-900">
                     {teamMembers.map((member, index) => (
-                        <tr key={member.user_id || index} className="border-b">
-                            <td className="p-3">{member.first_name} {member.last_name}</td>
-                            <td className="p-3">{member.oncallTotal || 0}</td>
-                            <td className="p-3">{member.totalReviews || 0}</td>
-                            <td className="p-3">{member.pulse}</td>
+                        <tr key={member.user_id || index} className="border-b border-gray-200 dark:border-gray-700">
+                            <td className="p-3 text-gray-900 dark:text-gray-100">{member.first_name} {member.last_name}</td>
+                            <td className="p-3 text-gray-900 dark:text-gray-100">{member.oncallTotal || 0}</td>
+                            <td className="p-3 text-gray-900 dark:text-gray-100">{member.totalReviews || 0}</td>
+                            <td className="p-3 text-gray-900 dark:text-gray-100">{member.pulse}</td>
                         </tr>
                     ))}
                 </tbody>

@@ -5,6 +5,8 @@ import Members from '../Member/MembersList';
 import AddMember from '../Member/AddMember';
 import AddSprint from '../sprint/AddSprint';
 import EditProject from '@/pages/components/projects/EditProject';
+import DarkModeButton from '@/pages/components/DarkModeButton/DarkModeButton';
+import { useTheme } from 'next-themes';
 import {
   Sheet,
   SheetContent,
@@ -31,15 +33,27 @@ const SidePanel: React.FC<SidePanel> = ({
     nonTeamMembers,
     isOpen = false,
     onOpenChange}) => {
+        const { theme, setTheme } = useTheme();
+        
+        const toggleTheme = () => {
+            setTheme(theme === 'dark' ? 'light' : 'dark');
+        };
+        
         console.log(members)
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent 
         side="right" 
-        className="w-80 sm:max-w-sm overflow-y-auto fixed top-0 right-0 h-full"
+        className="w-80 sm:max-w-sm overflow-y-auto fixed top-0 right-0 h-full bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700"
       >
         <SheetHeader className="mb-6">
-          <SheetTitle className="text-xl font-bold text-gray-800">Project Management</SheetTitle>
+          <div className="flex items-center justify-between">
+            <SheetTitle className="text-xl font-bold text-gray-800 dark:text-gray-100">Project Management</SheetTitle>
+            <DarkModeButton 
+              isDark={theme === 'dark'} 
+              onToggle={toggleTheme} 
+            />
+          </div>
         </SheetHeader>
 
         <div className="space-y-6">
@@ -47,18 +61,18 @@ const SidePanel: React.FC<SidePanel> = ({
             <EditProject project={project} />
          
 
-          <Separator />
+          <Separator className="bg-gray-200 dark:bg-gray-700" />
 
           
-            <h2 className="text-lg font-semibold text-gray-800">Sprints</h2>
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Sprints</h2>
             <div className="space-y-3">
               {sprints && sprints.length > 0 ? (
                 sprints.map(sprint => (
                   <Sprint key={sprint.id} sprint={sprint} project_id={project.id} />
                 ))
               ) : (
-                <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
-                  <p className="text-gray-600 text-center text-sm">No sprints yet</p>
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                  <p className="text-gray-600 dark:text-gray-400 text-center text-sm">No sprints yet</p>
                 </div>
               )}
             </div>
@@ -67,7 +81,7 @@ const SidePanel: React.FC<SidePanel> = ({
           
             <AddSprint sprints={sprints}/>
           
-          <Separator />
+          <Separator className="bg-gray-200 dark:bg-gray-700" />
           
           
            

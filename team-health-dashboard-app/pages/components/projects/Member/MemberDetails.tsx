@@ -47,9 +47,9 @@ const MemberDetails: React.FC<MemberDetailsProps> = ({ member }) => {
     const isDeleting = deleteMemberMutation.isPending;
     
     return (
-        <div className="bg-white rounded-lg border border-gray-200 p-3 flex justify-between items-center hover:shadow-sm transition-all duration-200 relative">
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3 flex justify-between items-center hover:shadow-sm dark:hover:shadow-md transition-all duration-200 relative">
             <div className="flex items-center">
-                <h3 className="font-medium text-gray-800 text-sm">
+                <h3 className="font-medium text-gray-800 dark:text-gray-100 text-sm">
                     {member.first_name} {member.last_name}
                 </h3>
             </div>
@@ -57,7 +57,7 @@ const MemberDetails: React.FC<MemberDetailsProps> = ({ member }) => {
             <button 
                 onClick={handleDeleteClick}
                 disabled={isDeleting}
-                className="text-xs px-3 py-1 bg-red-50 hover:bg-red-100 text-red-600 rounded-md transition-colors duration-200 flex items-center disabled:opacity-50 border border-red-200"
+                className="text-xs px-3 py-1 bg-red-50 dark:bg-red-900 hover:bg-red-100 dark:hover:bg-red-800 text-red-600 dark:text-red-300 rounded-md transition-colors duration-200 flex items-center disabled:opacity-50 border border-red-200 dark:border-red-700"
             >
                 {isDeleting ? (
                     <Loader2 size={12} className="animate-spin" />
@@ -67,16 +67,16 @@ const MemberDetails: React.FC<MemberDetailsProps> = ({ member }) => {
             </button>
             
             {showConfirm && (
-                <div className="absolute inset-0 bg-white bg-opacity-95 rounded-lg flex items-center justify-center border-2 border-red-200 backdrop-blur-sm">
+                <div className="absolute inset-0 bg-white dark:bg-gray-800 bg-opacity-95 dark:bg-opacity-95 rounded-lg flex items-center justify-center border-2 border-red-200 dark:border-red-700 backdrop-blur-sm">
                     <div className="text-center p-3">
-                        <p className="text-xs text-gray-700 mb-3">
+                        <p className="text-xs text-gray-700 dark:text-gray-300 mb-3">
                             Remove "{member.first_name} {member.last_name}"?
                         </p>
                         <div className="flex gap-2 justify-center">
                             <button
                                 onClick={handleConfirmDelete}
                                 disabled={isDeleting}
-                                className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 disabled:opacity-50 flex items-center gap-1"
+                                className="px-3 py-1 bg-red-600 dark:bg-red-700 text-white text-xs rounded hover:bg-red-700 dark:hover:bg-red-800 disabled:opacity-50 flex items-center gap-1"
                             >
                                 {isDeleting && <Loader2 size={10} className="animate-spin" />}
                                 Remove
@@ -84,7 +84,7 @@ const MemberDetails: React.FC<MemberDetailsProps> = ({ member }) => {
                             <button
                                 onClick={handleCancelDelete}
                                 disabled={isDeleting}
-                                className="px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded hover:bg-gray-300 disabled:opacity-50"
+                                className="px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs rounded hover:bg-gray-300 dark:hover:bg-gray-500 disabled:opacity-50"
                             >
                                 Cancel
                             </button>
