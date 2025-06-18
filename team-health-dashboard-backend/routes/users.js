@@ -8,7 +8,7 @@ router.get('/teamMembers/:project_id', userController.getTeamMembers);
 router.get('/nonTeamMembers/:project_id', userController.getNonTeamMembers);
 router.get('/', userController.getAllUsers);
 router.get('/contributors', userController.getContributors);
-router.get('/id/:id', userController.getUsers);
+router.get('/:id', userController.getUsers);
 router.patch('/', userController.updateUser);
 router.patch('/darkMode', userController.updateUserDarkMode);
 router.delete('/id/:id', userController.DeleteUsers);

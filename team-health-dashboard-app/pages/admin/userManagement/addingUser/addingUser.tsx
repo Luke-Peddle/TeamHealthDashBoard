@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import axios from "axios";
 import { useRouter } from 'next/router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import bcrypt from 'bcryptjs';
 
 
 
@@ -56,12 +57,12 @@ const AddingUser = () => {
 
     
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        
+         const hashedPassword = await bcrypt.hash(password, 12)
         const newUser = {
             username: userName,
-            password: password,
+            password: hashedPassword,
             firstName: firstName,
             lastName: lastName,
             email: email,
