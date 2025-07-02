@@ -48,7 +48,7 @@ async updateUser(req, res) {
     const { user_id, username,password, first_name,last_name,email, role } = req.body;
     console.log(user_id, username,password, first_name,last_name,email, role)
     console.log("id: " + first_name)
-     const user = await userModel.updateUser(user_id, username, first_name,last_name,email, role);
+     const user = await userModel.updateUser(user_id, username, first_name,last_name,email, role, password);
      await redisClient.del(`user:${user_id}`)
      res.status(201).json(user);
 

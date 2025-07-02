@@ -71,12 +71,30 @@ const userModel ={
           }
     },
 
-    async updateUser(id, username, firstName,lastName, email, role){
+    async getUserByUsername(username){
+        try{
+            const results = await db.query(
+               'SELECT * FROM users WHERE username = $1',
+                [username]
+                
+            )
+    
+            console.log(results)
+            return results.rows[0];
+    
+        }
+        catch (error) {
+            console.log(error)
+            throw error;
+          }
+    },
+
+    async updateUser(id, username, firstName,lastName, email, role, password){
         try{
            
             const results = await db.query(
-               ' UPDATE users  SET username = $2,first_name = $3,last_name = $4,email = $5,role = $6 WHERE user_id = $1',
-                [id,username, firstName,lastName, email, role]
+               ' UPDATE users  SET username = $2, password = $7, first_name = $3,last_name = $4,email = $5,role = $6 WHERE user_id = $1',
+                [id,username, firstName,lastName, email, role, password]
                 
             )
     
