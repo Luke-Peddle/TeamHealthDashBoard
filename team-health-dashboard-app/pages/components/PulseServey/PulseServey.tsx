@@ -3,13 +3,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { Projects } from '@/types/project';
 import { User } from '@/types/user';
+import { pulse } from '@/types/Pulse';
 
 interface PusleProps{
     project: Projects
-    user: User
+    user_id: number
 }
 
-const PulseServey: React.FC<PusleProps> = ({project, user}) => {
+const PulseServey: React.FC<PusleProps> = ({project, user_id}) => {
     const queryClient = useQueryClient();
 
     const [moodValue, setMoodValue] = useState("");
@@ -54,7 +55,7 @@ const PulseServey: React.FC<PusleProps> = ({project, user}) => {
         const date = new Date().toISOString().split('T')[0];
 
         const newSurvey = {
-            user_id: user.user_id,
+            user_id: user_id,
             project_id: project.id,
             score: moodValue,
             comment: moodMessage,
@@ -78,25 +79,25 @@ const PulseServey: React.FC<PusleProps> = ({project, user}) => {
     return (
         <div className="space-y-6">
             <div className="text-center">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">Daily Pulse Survey</h3>
-                <p className="text-sm text-gray-600">How are you feeling about the project today?</p>
+                <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Daily Pulse Survey</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">How are you feeling about the project today?</p>
             </div>
 
             {uploadMessage.text && (
                 <div className={`p-3 rounded-md text-sm border ${
-                    uploadMessage.type === 'success' ? 'bg-green-50 text-green-800 border-green-200' :
-                    uploadMessage.type === 'error' ? 'bg-red-50 text-red-800 border-red-200' :
-                    'bg-blue-50 text-blue-800 border-blue-200'
+                    uploadMessage.type === 'success' ? 'bg-green-50 dark:bg-green-900 text-green-800 dark:text-green-200 border-green-200 dark:border-green-700' :
+                    uploadMessage.type === 'error' ? 'bg-red-50 dark:bg-red-900 text-red-800 dark:text-red-200 border-red-200 dark:border-red-700' :
+                    'bg-blue-50 dark:bg-blue-900 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-700'
                 }`}>
                     <div className="flex items-center">
                         {uploadMessage.type === 'success' && (
-                            <div className="h-4 w-4 mr-2 text-green-500">✓</div>
+                            <div className="h-4 w-4 mr-2 text-green-500 dark:text-green-400">✓</div>
                         )}
                         {uploadMessage.type === 'error' && (
-                            <div className="h-4 w-4 mr-2 text-red-500">✗</div>
+                            <div className="h-4 w-4 mr-2 text-red-500 dark:text-red-400">✗</div>
                         )}
                         {uploadMessage.type === 'info' && (
-                            <div className="h-4 w-4 mr-2 text-blue-500">ℹ</div>
+                            <div className="h-4 w-4 mr-2 text-blue-500 dark:text-blue-400">ℹ</div>
                         )}
                         {uploadMessage.text}
                     </div>
@@ -105,7 +106,7 @@ const PulseServey: React.FC<PusleProps> = ({project, user}) => {
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-4">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
                         How would you rate your mood today?
                     </label>
                     <div className="grid grid-cols-5 gap-3">
@@ -123,14 +124,14 @@ const PulseServey: React.FC<PusleProps> = ({project, user}) => {
                                 />
                                 <label
                                     htmlFor={option.value}
-                                    className={`block w-full p-3 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
+                                    className={`block w-full h-20 p-3 rounded-lg border-2 cursor-pointer transition-all duration-200 flex flex-col items-center justify-center ${
                                         moodValue === option.value
-                                            ? 'border-blue-500 bg-blue-50'
-                                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900 dark:border-blue-400'
+                                            : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 bg-white dark:bg-gray-800'
                                     } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                                 >
-                                    <div className="text-2xl mb-1">{option.label}</div>
-                                    <div className="text-xs text-gray-600">{option.description}</div>
+                                    <div className="text-2xl mb-1 text-gray-900 dark:text-gray-100">{option.label}</div>
+                                    <div className="text-xs text-gray-600 dark:text-gray-400 text-center leading-tight">{option.description}</div>
                                 </label>
                             </div>
                         ))}
@@ -138,7 +139,7 @@ const PulseServey: React.FC<PusleProps> = ({project, user}) => {
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Additional comments (optional)
                     </label>
                     <textarea
@@ -147,7 +148,7 @@ const PulseServey: React.FC<PusleProps> = ({project, user}) => {
                         disabled={isSubmitting}
                         placeholder="Share any thoughts about your day or the project..."
                         rows={3}
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500 resize-none"
+                        className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 dark:disabled:bg-gray-700 disabled:text-gray-500 dark:disabled:text-gray-400 resize-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                     />
                 </div>
 
@@ -155,7 +156,7 @@ const PulseServey: React.FC<PusleProps> = ({project, user}) => {
                     type="submit"
                     disabled={isSubmitting || !moodValue}
                     className={`w-full text-sm font-medium py-3 px-4 rounded-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex justify-center items-center
-                    ${isSubmitting || !moodValue ? 'bg-blue-400 cursor-not-allowed text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+                    ${isSubmitting || !moodValue ? 'bg-blue-400 cursor-not-allowed text-white' : 'bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-800 text-white'}`}
                 >
                     {isSubmitting ? (
                         <div className="flex items-center justify-center">
@@ -166,7 +167,7 @@ const PulseServey: React.FC<PusleProps> = ({project, user}) => {
                 </button>
             </form>
         </div>
-  )
+    )
 }
 
 export default PulseServey
