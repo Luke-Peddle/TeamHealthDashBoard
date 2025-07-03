@@ -28,7 +28,6 @@ const VelocityChart: React.FC<VelocityChartProps> = ({velocityData}) => {
        { value: 'lastyear', label: 'Last Year' }
    ];
 
-   // React-select dark mode styles
    const selectStyles = {
        control: (provided: any) => ({
            ...provided,
@@ -187,11 +186,11 @@ const VelocityChart: React.FC<VelocityChartProps> = ({velocityData}) => {
 
    return (
        <div className="h-full">
+                     <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Velocity Summary</h3>
+
            <div className="flex items-center justify-between mb-6">
                <div className="flex items-center gap-4">
-                   <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 transition-colors duration-200">
-                       Velocity Trends
-                   </h3>
+                   
                    <Select
                        value={dateRange}
                        onChange={(selectedOption) => {

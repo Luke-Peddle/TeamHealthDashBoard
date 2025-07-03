@@ -136,7 +136,6 @@ const IncidentsCharts: React.FC<IncidentsChartsProps> = ({incidents}) => {
    const uniqueUsers = Array.from(new Set(filteredIncidents.map(i => i.username).filter(Boolean)));
    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
-   // Enhanced tooltip with more information
    const CustomTooltip = ({ active, payload, label }: any) => {
        if (active && payload && payload.length) {
            const totalIncidents = payload.reduce((sum: number, entry: any) => sum + (entry.value || 0), 0);
@@ -175,7 +174,6 @@ const IncidentsCharts: React.FC<IncidentsChartsProps> = ({incidents}) => {
        return null;
    };
 
-   // Legend toggle functionality
    const handleLegendClick = (entry: any) => {
        const { dataKey } = entry;
        setHiddenSeries(prev => ({

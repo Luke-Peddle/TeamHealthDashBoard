@@ -9,9 +9,10 @@ import { Projects } from '@/types/project';
 interface ProjectProps{
     projects: Projects[],
     user_id: number
+    role: string
 }
 
-const ContributorProjectList: React.FC<ProjectProps> = ({projects, user_id}) => {
+const ContributorProjectList: React.FC<ProjectProps> = ({projects, user_id, role}) => {
     return (
         <div>
             <div className="flex items-center justify-between mb-6">
@@ -21,7 +22,7 @@ const ContributorProjectList: React.FC<ProjectProps> = ({projects, user_id}) => 
             <div className="space-y-3">
                 {projects && projects.length > 0 ? (
                     projects.map(project => (
-                        <ProjectDetails key={project.id} project={project} user_id={user_id} />
+                        <ProjectDetails key={project.id} project={project} user_id={user_id} role = {role} />
                     ))
                 ) : (
                     <div className="text-center py-8 bg-gray-50 dark:bg-gray-800 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 transition-colors duration-200">

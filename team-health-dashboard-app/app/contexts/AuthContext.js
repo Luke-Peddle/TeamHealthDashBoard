@@ -98,9 +98,9 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+
     const logout = async () => {
         try {
-            // Call backend logout to clear cookies
             await api.post('/logout');
             console.log('Backend logout successful');
         } catch (error) {
@@ -124,7 +124,7 @@ export const AuthProvider = ({ children }) => {
 
     const refreshToken = async () => {
         try {
-            const response = await api.post('/refresh');
+            const response = await api.post('login/refresh');
             const { accessToken, user } = response.data;
 
             if (typeof window !== 'undefined') {

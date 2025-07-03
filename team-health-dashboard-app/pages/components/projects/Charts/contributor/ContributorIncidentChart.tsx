@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Select from 'react-select';
 import { incidents } from '@/types/onCall';
+import { useTheme } from 'next-themes';
 
 interface IncidentsChartsProps {
    incidents: incidents[]
@@ -12,8 +13,8 @@ interface SelectOption {
    label: string;
 }
 
-const ContributorIncidentChart: React.FC<IncidentsChartsProps>  = ({incidents}) => {
-
+const ContributorIncidentChart: React.FC<IncidentsChartsProps> = ({incidents}) => {
+    const { theme } = useTheme();
     const [dateRange, setDateRange] = useState<SelectOption>({ value: 'all', label: 'All Time' });
     
     const dateRangeOptions: SelectOption[] = [
@@ -28,12 +29,12 @@ const ContributorIncidentChart: React.FC<IncidentsChartsProps>  = ({incidents}) 
         return (
             <div className="h-80 flex items-center justify-center">
                 <div className="text-center">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                         </svg>
                     </div>
-                    <p className="text-gray-500">No incident data available</p>
+                    <p className="text-gray-500 dark:text-gray-400">No incident data available</p>
                 </div>
             </div>
         );
@@ -84,11 +85,9 @@ const ContributorIncidentChart: React.FC<IncidentsChartsProps>  = ({incidents}) 
             groupedData[date] = { 
                 date, 
                 totalIncidents: 0, 
-                
             };
         }
         groupedData[date].totalIncidents += incident.incidents_count;
-       
     });
 
     const data = Object.values(groupedData).sort((a, b) => 
@@ -100,27 +99,56 @@ const ContributorIncidentChart: React.FC<IncidentsChartsProps>  = ({incidents}) 
             const data = payload[0].payload;
             
             return (
-                <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg min-w-[200px]">
-                    <p className="font-semibold text-gray-800 mb-2">
+                <div className="bg-white dark:bg-gray-800 p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg min-w-[200px]">
+                    <p className="font-semibold text-gray-800 dark:text-gray-100 mb-2">
                         Week of: {label}
                     </p>
                     <div className="space-y-1">
                         <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-700">Total Incidents:</span>
-                            <span className="font-medium text-gray-900">{data.totalIncidents}</span>
+                            <span className="text-sm text-gray-700 dark:text-gray-300">Total Incidents:</span>
+                            <span className="font-medium text-gray-900 dark:text-gray-100">{data.totalIncidents}</span>
                         </div>
-                      
                     </div>
-                   
                 </div>
             );
         }
         return null;
     };
 
+    const selectStyles = {
+        control: (provided: any) => ({
+            ...provided,
+            backgroundColor: theme === 'dark' ? '#374151' : '#ffffff',
+            borderColor: theme === 'dark' ? '#4b5563' : '#d1d5db',
+            color: theme === 'dark' ? '#f9fafb' : '#111827',
+            '&:hover': {
+                borderColor: theme === 'dark' ? '#6b7280' : '#9ca3af',
+            },
+        }),
+        menu: (provided: any) => ({
+            ...provided,
+            backgroundColor: theme === 'dark' ? '#374151' : '#ffffff',
+            border: theme === 'dark' ? '1px solid #4b5563' : '1px solid #d1d5db',
+        }),
+        option: (provided: any, state: any) => ({
+            ...provided,
+            backgroundColor: state.isFocused 
+                ? (theme === 'dark' ? '#4b5563' : '#f3f4f6')
+                : (theme === 'dark' ? '#374151' : '#ffffff'),
+            color: theme === 'dark' ? '#f9fafb' : '#111827',
+            '&:hover': {
+                backgroundColor: theme === 'dark' ? '#4b5563' : '#f3f4f6',
+            },
+        }),
+        singleValue: (provided: any) => ({
+            ...provided,
+            color: theme === 'dark' ? '#f9fafb' : '#111827',
+        }),
+    };
+
     return (
         <div className="h-full">
-            <h3 className="text-lg font-semibold mb-4">Team Incident Summary</h3>
+            <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Team Incident Summary</h3>
             
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
@@ -134,6 +162,7 @@ const ContributorIncidentChart: React.FC<IncidentsChartsProps>  = ({incidents}) 
                         options={dateRangeOptions}
                         isSearchable={false}
                         className="min-w-[200px]"
+                        styles={selectStyles}
                     />
                 </div>
             </div>
@@ -141,16 +170,16 @@ const ContributorIncidentChart: React.FC<IncidentsChartsProps>  = ({incidents}) 
             <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#374151' : '#f0f0f0'} />
                         <XAxis 
                             dataKey="date" 
-                            tick={{ fontSize: 12, fill: '#6b7280' }}
+                            tick={{ fontSize: 12, fill: theme === 'dark' ? '#d1d5db' : '#6b7280' }}
                             angle={-45}
                             textAnchor="end"
                             height={80}
                         />
                         <YAxis 
-                            tick={{ fontSize: 12, fill: '#6b7280' }}
+                            tick={{ fontSize: 12, fill: theme === 'dark' ? '#d1d5db' : '#6b7280' }}
                             label={{ value: 'Total Incidents', angle: -90, position: 'insideLeft' }}
                         />
                         <Tooltip content={<CustomTooltip />} />
