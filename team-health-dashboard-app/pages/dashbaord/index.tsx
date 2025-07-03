@@ -1,111 +1,138 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query'
-import axios from 'axios';
+import { useRouter } from 'next/router'
+import { useAuth } from '../../app/contexts/AuthContext'
+import api from '../../utils/axiosConfig'
 import ProjectList from './manager/projects/projectList';
 import ContributorProjectList from '../components/contributor/dashbaord/ProjectList';
+import LogOutSidePanel from '@/pages/components/projects/SidePannel/LogoutSidePanel';
+import { Button } from '@/components/ui/button';
+import { Menu, ChevronRight } from 'lucide-react';
 
-const user = {
+const fetchProjects = async (userId, role) => {
+  const endpoint = role === "manager" 
+    ? `/project/manager/${userId}`
+    : `/project/contributor/${userId}`;
   
-        "user_id": 24,
-        "username": "SamSmithy",
-        "password": "Sam1234",
-        "first_name": "Sam",
-        "last_name": "Smith",
-        "email": "sam@gmail.com",
-        "role": "contributor"
-};
-
-const fetchProjects = async (userId) => {
-  const response = await axios.get(`http://localhost:4000/api/project/manager/${userId}`);
+  const response = await api.get(endpoint);
   return response.data;
 };
 
-function toPlainObject(obj) {
-  if (obj === null || obj === undefined) {
-    return obj;
-  }
-  
-  if (Array.isArray(obj)) {
-    return obj.map(item => toPlainObject(item));
-  }
-  
-  if (obj instanceof Date) {
-    return obj.toISOString();
-  }
-  
-  if (typeof obj === 'object' && typeof obj.toJSON === 'function') {
-    return toPlainObject(obj.toJSON());
-  }
-  
-  if (typeof obj === 'object') {
-    const plain = {};
-    for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        const value = obj[key];
-        if (typeof value === 'function' || typeof value === 'symbol') {
-          continue;
-        }
-        plain[key] = toPlainObject(value);
+const Index = () => {
+  const { user, isAuthenticated, loading } = useAuth();
+  const router = useRouter();
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+
+  useEffect(() => {
+    if (!loading) {
+      if (!isAuthenticated()) {
+        router.push('/login');
+        return;
+      }
+      
+      if (user && user.role === 'admin') {
+        router.push('/admin');
+        return;
+      }
+      
+      // Check if user has allowed role for this page
+      if (user && !['user', 'manager', 'team_lead', 'contributor'].includes(user.role)) {
+        router.push('/login');
+        return;
       }
     }
-    return plain;
-  }
-  
-  return obj;
-}
+  }, [loading, isAuthenticated, user, router]);
 
-export async function getServerSideProps() {
-  console.log('enter')
-  let response;
-  try {
-    if(user.role === "manager"){
-     response = await axios.get(`http://localhost:4000/api/project/manager/${user.user_id}`);
-    console.log(response.data);
-    }
-
-    else{
-       response = await axios.get(`http://localhost:4000/api/project/contributor/${user.user_id}`);
-    console.log(response.data);
-    }
-    const projects = toPlainObject(response.data);
-    return { 
-      props: { 
-        projects: projects || [],
-        userId: user.user_id
-      } 
-    };
-  } catch (error) {
-    console.error('Server-side fetch error:', error);
-    return { 
-      props: { 
-        projects: [],
-        userId: user.user_id
-      } 
-    };
-  }
-}
-
-const Index = ({projects: initialProjects, userId}) => {
-  const { data: projects } = useQuery({
-    queryKey: ['projects', userId],
-    queryFn: () => fetchProjects(userId),
-    initialData: initialProjects,
+  const { data: projects, isLoading: projectsLoading, error } = useQuery({
+    queryKey: ['projects', user?.userId, user?.role],
+    queryFn: () => fetchProjects(user.userId, user.role),
+    enabled: !!user && isAuthenticated() && user.role !== 'admin', 
     staleTime: 2 * 60 * 1000,
+    retry: 1,
   });
 
+  // Show loading while checking authentication
+  if (loading || !user) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
+        <div className="text-lg text-gray-900 dark:text-gray-100 transition-colors duration-200">Loading...</div>
+      </div>
+    );
+  }
+
+  // Don't render if not authenticated (will redirect)
+  if (!isAuthenticated()) {
+    return null;
+  }
+
+  // Don't render for admin users (will redirect)
+  if (user.role === 'admin') {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
+        <div className="text-lg text-gray-900 dark:text-gray-100 transition-colors duration-200">Redirecting to admin...</div>
+      </div>
+    );
+  }
+
+  // Don't render for unauthorized roles
+  if (!['user', 'manager', 'team_lead', 'contributor'].includes(user.role)) {
+    return null;
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
+        <div className="bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-300 px-4 py-3 rounded transition-colors duration-200">
+          Error loading projects: {error.message}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-semibold text-gray-800 mb-4">Dashboard</h1>
+    <div className="p-4 min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
+      <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4 transition-colors duration-200">
+        Dashboard - {user.role} ({user.email || user.username})
+      </h1>
       
-      {user.role === "manager" ? (
-        <div>
-          <ProjectList projects={projects} user_id={user.user_id} />
+      {projectsLoading ? (
+        <div className="text-center py-8">
+          <div className="text-lg text-gray-900 dark:text-gray-100 transition-colors duration-200">Loading projects...</div>
         </div>
       ) : (
-        <div>
-          <ContributorProjectList projects={projects} user_id={user.user_id} />
-        </div>
+        <>
+          {user.role === "manager" ? (
+            <div>
+              <ProjectList projects={projects || []} user_id={user.userId} />
+            </div>
+          ) : (
+            <div>
+              <ContributorProjectList projects={projects || []} user_id={user.userId} />
+            </div>
+          )}
+        </>
       )}
+
+      <Button
+        onClick={() => setIsPanelOpen(!isPanelOpen)}
+        className={`fixed top-8 right-0 z-50 h-10 w-10 rounded-l-md rounded-r-none bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 transition-all duration-300 ${isPanelOpen ? 'translate-x-[-320px]' : 'translate-x-0'
+          }`}
+        size="icon"
+        title={isPanelOpen ? "Close Panel" : "Open Panel - Edit Project, Manage Sprints & Team"}
+      >
+        {isPanelOpen ? (
+          <ChevronRight className="h-5 w-5 text-white" />
+        ) : (
+          <Menu className="h-5 w-5 text-white" />
+        )}
+      </Button>
+
+      <LogOutSidePanel
+        isOpen={isPanelOpen}
+        user_id={user.userId}
+        onOpenChange={setIsPanelOpen}
+      />
     </div>
   )
 }
